@@ -1,0 +1,33 @@
+---
+title: "SFE"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SFE}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SFEWorkshop)
+```
+
+OK, I have limited space. What are the most important things users should know about SFE? I think for this example, I'll focus on just one sample, and I'm ready to answer questions about multiple samples. Keep this one to 10 minutes or so.
+
+1. Intro to Simple Feature and operations of the sf data frame
+2. Intro to SCE and SPE, so the audience get the background for what SFE is extending
+3. Intro to SFE, use that schematic. Mention opportunities presented with spatial information unavailable from non-spatial scRNA-seq
+4. Intro to the muscle dataset used
+
+1. Reading Space Ranger output directly as SFE
+2. colGeometry getters and setters; rowGeometry is less commonly used
+3. annotGeometry getters and setters and use cases
+4. Spatial graphs, spdep wrappers, Visium graph
+5. Geometric operations to find number of myofibers and nuclei per spot, and to subset the SFE object
+5. Just briefly mention multiple samples

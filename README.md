@@ -1,52 +1,15 @@
-# BuildABiocWorkshop
+# BioC 2022 SpatialFeatureExperiment workshop
 
-This package is a template for building a Bioconductor workshop. The package
-includes Github actions to:
+Here we demonstrate the [`SpatialFeatureExperiment`](https://github.com/pachterlab/SpatialFeatureExperiment) (SFE) S4 class that brings [Simple Features (as in the `sf` package)](https://r-spatial.github.io/sf/) to [`SpatialExperiment`](https://github.com/drighelli/SpatialExperiment), and exploratory spatial data analysis (ESDA) with the SFE object with the [`Voyager`](https://github.com/pachterlab/Voyager) package. This workshop has 3 parts:
 
-1. Set up bioconductor/bioconductor_docker:devel on Github resources
-2. Install package dependencies for your package (based on the `DESCRIPTION` file)
-3. Run `rcmdcheck::rcmdcheck`
-4. Build a pkgdown website and push it to github pages
-5. Build a docker image with the installed package and dependencies and deploy to [the Github Container Repository](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#pulling-container-images) at the name `ghcr.io/gihub_user/repo_name`, all lowercase. 
+1. An introduction to spatial transcriptomics, geospatial data analysis, and how the geospatial methods may or may not apply to spatial transcriptomics.
+2. Introduction to the `sf` data frame and the SFE object. A [published Visium dataset](https://doi.org/10.1038/s42003-021-02810-x) already as an SFE object provided in the [`SFEData`](https://github.com/pachterlab/SFEData) package is used for the demonstrations here and in part 3.
+3. Plotting and basic ESDA with the `Voyager` package. The ESDA includes computing Moran's I and Geary's C for spatial autocorrelation, permutation testing for Moran's I, correlograms, and Moran plot.
 
-## Responsibilities
+## Prerequisites
+* Basic knowledge of R syntax and data structures
+* Familiarity with [`SingleCellExperiment`](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html) and preferably also `SpatialExperiment` classes
+* Familiarity with `sf` is preferable for in depth data analyses using SFE but optional for this workshop
 
-Package authors are primarily responsible for:
-
-1. Creating a landing site of their choosing for their workshops (a website). This website should be listed in the `DESCRIPTION` file as the `URL`.
-2. Creating a docker image that will contain workshop materials and the installed packages necessary to run those materials. The name of the resulting docker image, including "tag" if desired, should be listed in a non-standard tag, `DockerImage:` in the `DESCRIPTION` file. 
-
-Both of those tasks can be accomplished using the Github actions included in this template package. The vignette accompanying this package describes how to accomplish both of these tasks.
-
-## Details
-
-For detailed instructions, see the `How to build a workshop` article/vignette.
-
-## Results of successful deployment
-
-- A working docker image that contains the installed package and dependencies.
-- An up-to-date `pkgdown` website at https://YOURUSERNAME.github.io/YOURREPOSITORYNAME/
-- Docker image will be tagged with `latest`, `sha-XXXXXX` where `XXXXXX` is the hash of the current `master` commit, and `master`. 
-
-## To use the resulting image:
-
-```sh
-docker run -e PASSWORD=<choose_a_password_for_rstudio> -p 8787:8787 YOURDOCKERIMAGENAME
-```
-Once running, navigate to http://localhost:8787/ and then login with `rstudio`:`yourchosenpassword`. 
-
-To try with **this** repository docker image:
-
-```sh
-docker run -e PASSWORD=abc -p 8787:8787 ghcr.io/seandavi/buildabiocworkshop
-```
-
-*NOTE*: Running docker that uses the password in plain text like above exposes the password to others 
-in a multi-user system (like a shared workstation or compute node). In practice, consider using an environment 
-variable instead of plain text to pass along passwords and other secrets in docker command lines. 
-
-
-## Whatcha get
-
-- https://seandavi.github.io/BuildABiocWorkshop
-- A Docker image that you can run locally, in the cloud, or (usually) even as a singularity container on HPC systems. 
+## Using the Docker image
+TBD

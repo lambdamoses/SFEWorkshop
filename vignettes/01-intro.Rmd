@@ -1,0 +1,41 @@
+---
+title: "1. From geospatial to spatial transcriptomics"
+author:
+    - name: "Lambda Moses"
+      email: "dlu2@caltech.edu"
+    - name: "Lior Pachter"
+      email: "lpachter@caltech.edu"
+date: "r Sys.Date()"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{1. From geospatial to spatial transcriptomics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SFEWorkshop)
+```
+
+1. A geospatial analogy of bulk RNA-seq, non-spatial scRNA-seq, and spatial transcriptomics. Maybe use Seattle as it's the conference location. Or use LA due to my familiarity.
+2. Plots from museumst showing the rapid growth of spatial transcriptomics and types of spatial transcriptomics
+3. Intro to geospatial data and data analysis methods, like Moran's I, Getis-Ord Gi*, kriging, CAR, SAR, spatial filtering, ecological patch morphology, semivariogram, GW regression, GWPCA, MULTISPATI PCA, spatially informed clustering, and etc. Also limitations of the geospatial methods or analogy.
+7. Just say what SFE and Voyager are, the objectives
+8. Limitations and future directions
+
+# An analogy from geographical space
+Data from bulk RNA-seq, single cell RNA-seq (scRNA-seq), and spatial transcriptomics all come from originally spatially organized tissues (except for blood), where such spatial organization plays a role in the properties and functions of the tissues. For this reason, a geographical analogy may be more adequate than the traditional analogy of the smoothie vs. fruit salad vs. tart. 
+
+# Introduction to spatial transcriptomics data
+museumst plot
+The spatial opportunity unavailable with scRNA-seq
+
+# Geospatial data
+Vector (areal, geostatistical), raster, point process, network, how they relate to spatial transcriptomics data

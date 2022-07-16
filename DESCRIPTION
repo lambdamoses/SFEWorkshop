@@ -1,16 +1,14 @@
-Package: BuildABiocWorkshop
-Title: Bioconductor or R Workshop Template and Github Actions
-Version: 2.0.0
+Package: SFEWorkshop
+Title: BioC 2022 SpatialFeatureExperiment package demo
+Version: 0.99.0
 Authors@R: 
-    person(given = "Sean",
-           family = "Davis",
-           role = c("aut", "cre"),
-           email = "seandavi@gmail.com",
-           comment = c(ORCID = "0000-0002-8991-6458"))
-Description: This package serves as a template for using github actions to 
-    prepare a Bioconductor Workshop package for use. In particular,
-    a pkgdown website and docker image are generated based on workflow 
-    settings. 
+    c(person("Lambda", "Moses", email = "dlu2@caltech.edu", 
+    role = c("aut", "cre"),
+    comment = c(ORCID = "0000-0002-7092-9427")),
+    person("Lior", "Pachter", email = "lpachter@caltech.edu",
+    role = c("aut", "ths"),
+    comment = c(ORCID = "0000-0002-9164-6231")))
+Description: Live coding for the SpatialFeatureExperiment package demo at BioC 2022.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -22,7 +20,11 @@ Suggests:
     knitr,
     rmarkdown,
     pkgdown
-URL: https://seandavi.github.io/BuildABiocWorkshop/
-BugReports: https://github.com/seandavi/BuildABiocWorkshop/issues/new/choose
+Remotes:
+    pachterlab/SFEData
+    pachterlab/SpatialFeatureExperiment
+    pachterlab/Voyager
+URL: https://github.com/lambdamoses/SFEWorkshop
+BugReports: https://github.com/lambdamoses/SFEWorkshop/issues
 VignetteBuilder: knitr
-DockerImage: ghcr.io/seandavi/buildabiocworkshop:latest
+DockerImage: lambdamoses/sfeworkshop:latest

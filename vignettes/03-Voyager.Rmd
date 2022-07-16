@@ -1,0 +1,28 @@
+---
+title: "Voyager"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Voyager}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SFEWorkshop)
+```
+
+What are the most important things I want users to know about Voyager? I think this should be 10 minutes or so. Practice at home first.
+
+1. Plotting gene expression and colData in space
+2. Plotting what's in 1 plus annotation geometry
+3. Moran's I permutation test and plotting. I think I'll lump this with just plain Moran's I and Geary's C in one section.
+4. Correlograms and plotting. Maybe not mentioning clustering if I don't have time. Shall I mention checking whether residuals of regression models have spatial autocorrelation? Maybe not now, but it may be interesting when benchmarking regression based SVG methods. 
+5. Moran plot, not mentioning clustering if I don't have time.
+6. Briefly mention univariate local spatial autocorrelation metrics, multivariate spatial methods, spatial regression, and limitations regarding spatial point processes, raster, and 3D data. Maybe just keep it to the slides.
