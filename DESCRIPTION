@@ -24,7 +24,7 @@ Remotes:
     pachterlab/SFEData
     pachterlab/SpatialFeatureExperiment
     pachterlab/Voyager
-URL: https://github.com/lambdamoses/SFEWorkshop
+URL: https://lambdamoses.github.io/SFEWorkshop/
 BugReports: https://github.com/lambdamoses/SFEWorkshop/issues
 VignetteBuilder: knitr
 DockerImage: lambdamoses/sfeworkshop:latest

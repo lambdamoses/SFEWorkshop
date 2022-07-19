@@ -12,4 +12,8 @@ Here we demonstrate the [`SpatialFeatureExperiment`](https://github.com/pachterl
 * Familiarity with `sf` is preferable for in depth data analyses using SFE but optional for this workshop
 
 ## Using the Docker image
-TBD
+```
+docker run -e PASSWORD=abc -p 8787:8787 lambdamoses/sfeworkshop:latest
+```
+
+Once running, navigate to http://localhost:8787/ and then login with username rstudio and password abc.
