@@ -17,7 +17,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  echo = FALSE, message = FALSE
+  echo = FALSE, message = FALSE, dpi = 150, fig.align = "center"
 )
 ```
 
@@ -50,7 +50,7 @@ for (i in seq_along(bboxes)) {
 }
 ```
 
-```{r, fig.width=6, fig.height=1.5}
+```{r, fig.width=8, fig.height=2}
 ggplot(states_sub, aes(fill = medhhincome)) + geom_sf() +
   theme_void() +
   facet_wrap(~ state_name, nrow = 1)
@@ -58,24 +58,25 @@ ggplot(states_sub, aes(fill = medhhincome)) + geom_sf() +
 
 Non-spatial scRNA-seq is like tourist attractions in Seattle separated from their neighborhoods. There's the Space Needle, the Museum of Pop Culture, Chihuli glass museum, Smith Tower, Pike Place, Museum of Flight, and etc. These tourist attractions can also be classified based on their characteristics, such as architectural style, function, and era of construction. Dimension reduction can be performed on these numerous characteristics. This would be of more interest to an avid tourist who really wants to get to know Seattle than the state level averages. 
 
-```{r}
+```{r, fig.align='center'}
 knitr::include_graphics("seattle_attractions.png")
 ```
 
 How to get to these tourist attractions? When you look at the map, you find that certain kinds of tourist attractions tend to cluster in space, such as the cluster of museums in the vicinity of Space Needle and the cluster of older buildings around Smith Tower. Different regions of Seattle with different vibes and functions are also annotated on the map. There are historical reasons that led to such spatial regions and clustering, such as the 1962 World's Fair that gave rise to the Space Needle. Here we see how locating the tourist attractions in space point to a deeper understanding of the properties of Seattle. Spatial transcriptomics is like studying a map of Seattle. 
-```{r}
+
+```{r, fig.align='center', fig.width=5, fig.height=5}
 knitr::include_graphics("seattle_map.png")
 ```
 
 # Introduction to spatial transcriptomics data
 Back to spatial transcriptomics. A working definition of "spatial transcriptomics" is any attempt to quantify the transcripts of more genes than can be done in one round of fluorescent *in situ* hybridization (FISH) while preserving the spatial context of the gene expression in the tissue. Since 2018, interest in spatial transcriptomics -- in both data collection and data analysis -- has grown drastically. 
-```{r, fig.cap="Number of publication over time for current era data collection and data analysis. Bin width is 120 days. The x-shaped points show the number of publications from the last bin, which is not yet full."}
+```{r, fig.cap="Number of publication over time for current era data collection and data analysis. Bin width is 120 days. The x-shaped points show the number of publications from the last bin, which is not yet full.", dpi=300}
 knitr::include_graphics("https://pachterlab.github.io/LP_2021/07-current_analysis_files/figure-html/analysis-current-1.png")
 ```
 
 Based on how the spatial context is preserved, spatial transcriptomics data collection technologies fall into 5 categories, sorted by popularity (plot showing number of publications per category), though there are gray areas:
 
-```{r, fig.cap="Techniques used by at least 3 institutions and the number of institutions that have used them."}
+```{r, fig.cap="Techniques used by at least 3 institutions and the number of institutions that have used them.", dpi = 300}
 knitr::include_graphics("https://pachterlab.github.io/LP_2021/04-current_files/figure-html/n-insts-1.png")
 ```
 
@@ -85,7 +86,7 @@ knitr::include_graphics("https://pachterlab.github.io/LP_2021/04-current_files/f
 4. *In situ* sequencing (ISS), which is similar to smFISH as the transcripts are visualized as discrete puncta and counted. However, in ISS, the gene barcodes are determined by *in situ* sequencing, usually with sequencing by ligation, rather than with combinatorial barcoding. smFISH and ISS based data have single cell resolution.
 5. Spatial context is not directly recorded, but computationally reconstructed, such as by recording pairwise spatial adjacency of cDNAs as in DNA microscopy. In addition, the term "spatial" is sometimes used to refer to sub-cellular resolution, such as in APEX-seq, where transcripts are "localized" or organelles; since no spatial coordinates are recorded, packages in this workshop are irrelevant to these technologies.
 
-```{r}
+```{r, dpi = 300}
 knitr::include_graphics("https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41592-022-01409-2/MediaObjects/41592_2022_1409_Fig2_HTML.png")
 ```
 
