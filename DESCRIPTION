@@ -11,16 +11,30 @@ Authors@R:
 Description: Live coding for the SpatialFeatureExperiment package demo at BioC 2022.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
 Depends: 
     Biobase
 Suggests: 
+    BiocParallel,
+    bluster,
+    ggplot2,
     knitr,
-    rmarkdown,
+    Matrix,
+    patchwork,
     pkgdown,
-    png
+    png,
+    rmarkdown,
+    scales,
+    scater,
+    scran,
+    sf,
+    SFEData,
+    sparseMatrixStats,
+    SpatialFeatureExperiment,
+    SpatialExperiment,
+    Voyager,
+    urbnmapr
 Remotes:
     pachterlab/SFEData,
     pachterlab/SpatialFeatureExperiment,
