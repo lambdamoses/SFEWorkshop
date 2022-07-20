@@ -50,13 +50,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/SFE.html">2. SpatialFeatureExperiment</a>
+      <a href="../articles/vig1_intro.html">1. From geospatial to spatial transcriptomics</a>
     </li>
     <li>
-      <a href="../articles/Voyager.html">3. Voyager</a>
+      <a href="../articles/vig2_SFE.html">2. SpatialFeatureExperiment</a>
     </li>
     <li>
-      <a href="../articles/intro.html">1. From geospatial to spatial transcriptomics</a>
+      <a href="../articles/vig3_Voyager.html">3. Voyager</a>
     </li>
   </ul>
 </li>
@@ -84,8 +84,8 @@
       <h1 data-toc-skip>2. SpatialFeatureExperiment</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/lambdamoses/SFEWorkshop/blob/HEAD/vignettes/SFE.Rmd"><code>vignettes/SFE.Rmd</code></a></small>
-      <div class="hidden name"><code>SFE.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/lambdamoses/SFEWorkshop/blob/HEAD/vignettes/vig2_SFE.Rmd"><code>vignettes/vig2_SFE.Rmd</code></a></small>
+      <div class="hidden name"><code>vig2_SFE.Rmd</code></div>
 
     </div>
 
@@ -320,7 +320,7 @@ of index.</p>
 <span><span class="co">#&gt; ACGCTAGTGATACACT POLYGON ((5639.096 13394.44...     Vis5A</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">spots</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SFE_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Setter</span></span>
 <span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">colGeometry</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"foobar"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">spots</span></span></code></pre></div>
@@ -389,7 +389,7 @@ getters and setters. <code>annotGeometries</code> is covered in <a href="https:/
 <span><span class="co">#&gt; 7  7 POLYGON ((5094 13000, 5095 ...     Vis5A</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">tb</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SFE_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
+<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Setter, by name or index</span></span>
 <span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">annotGeometry</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"tissueBoundary"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">tb</span></span></code></pre></div>
@@ -461,7 +461,7 @@ contiguity.</p>
 <span><span class="co">#&gt; W 77 5929 77 28.0096 309.4083</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">g</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SpatialExperiment/man/SpatialExperiment-methods.html" class="external-link">spatialCoords</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SFE_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
+<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set graph by name</span></span>
 <span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraph</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"graph1"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">g</span></span></code></pre></div>
@@ -488,7 +488,7 @@ found with the known locations of the barcodes.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraph</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"visium"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/findVisiumGraph.html" class="external-link">findVisiumGraph</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraph</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"visium"</span><span class="op">)</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SpatialExperiment/man/SpatialExperiment-methods.html" class="external-link">spatialCoords</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SFE_files/figure-html/unnamed-chunk-21-1.png" width="700"></p>
+<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-21-1.png" width="700"></p>
 <p>Similar to <code>dimGeometries</code>, the graphs have
 <code>spatialGraphNames</code> getter and setter and the margin specific
 wrappers.</p>
@@ -914,7 +914,7 @@ does NOT crop the image.</p>
 <code class="sourceCode R"><span><span class="co"># Before</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">tissueBoundary</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">spotPoly</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"gray"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SFE_files/figure-html/unnamed-chunk-44-1.png" width="700"></p>
+<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-44-1.png" width="700"></p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sfe_in_tissue</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/crop.html" class="external-link">crop</a></span><span class="op">(</span><span class="va">sfe</span>, y <span class="op">=</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">tissueBoundary</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span>, colGeometryName <span class="op">=</span> <span class="st">"spotPoly"</span><span class="op">)</span></span></code></pre></div>
 <p>Note that for large datasets with many geometries, cropping can take
@@ -923,7 +923,7 @@ a while to run.</p>
 <code class="sourceCode R"><span><span class="co"># After</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">tissueBoundary</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">spotPoly</a></span><span class="op">(</span><span class="va">sfe_in_tissue</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"gray"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SFE_files/figure-html/unnamed-chunk-46-1.png" width="700"></p>
+<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-46-1.png" width="700"></p>
 <p><code>crop</code> can also be used in the conventional sense of
 cropping, i.e. specifying a bounding box.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">

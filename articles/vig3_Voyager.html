@@ -50,13 +50,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/SFE.html">2. SpatialFeatureExperiment</a>
+      <a href="../articles/vig1_intro.html">1. From geospatial to spatial transcriptomics</a>
     </li>
     <li>
-      <a href="../articles/Voyager.html">3. Voyager</a>
+      <a href="../articles/vig2_SFE.html">2. SpatialFeatureExperiment</a>
     </li>
     <li>
-      <a href="../articles/intro.html">1. From geospatial to spatial transcriptomics</a>
+      <a href="../articles/vig3_Voyager.html">3. Voyager</a>
     </li>
   </ul>
 </li>
@@ -84,8 +84,8 @@
       <h1 data-toc-skip>3. Voyager</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/lambdamoses/SFEWorkshop/blob/HEAD/vignettes/Voyager.Rmd"><code>vignettes/Voyager.Rmd</code></a></small>
-      <div class="hidden name"><code>Voyager.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/lambdamoses/SFEWorkshop/blob/HEAD/vignettes/vig3_Voyager.Rmd"><code>vignettes/vig3_Voyager.Rmd</code></a></small>
+      <div class="hidden name"><code>vig3_Voyager.Rmd</code></div>
 
     </div>
 
@@ -243,7 +243,7 @@ provided in the <code>SFEData</code> package.</p>
 <span><span class="co">#&gt; Graphs:</span></span>
 <span><span class="co">#&gt; Vis5A:</span></span></code></pre></div>
 The H&amp;E image of this section:
-<div class="figure">
+<div class="figure" style="text-align: center">
 <img src="tissue_lowres_5a.jpeg" alt="A cross section of mouse muscle is slightly off center to the lower left. In the middle of the tissue is the notexin injury site with leukocyte infiltration and fewer myofibers. The rest of the tissue section is tightly packed with myofibers." width="100%"><p class="caption">
 Low resolution H&amp;E image of the tissue section
 </p>
@@ -347,7 +347,7 @@ for the <code>annotGeometry</code>.</p>
 <span>                   annotGeometryName <span class="op">=</span> <span class="st">"myofiber_simplified"</span>, </span>
 <span>                   annot_aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"area"</span><span class="op">)</span>, </span>
 <span>                   aes_use <span class="op">=</span> <span class="st">"color"</span>, size <span class="op">=</span> <span class="fl">0.5</span>, fill <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-8-1.png" title="Plot of Visium spots in tissue and myofiber polygons in physical space. Visium spots are colored by nCounts, and myofibers are colored by area." alt="Plot of Visium spots in tissue and myofiber polygons in physical space. Visium spots are colored by nCounts, and myofibers are colored by area." width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-8-1.png" title="Plot of Visium spots in tissue and myofiber polygons in physical space. Visium spots are colored by nCounts, and myofibers are colored by area." alt="Plot of Visium spots in tissue and myofiber polygons in physical space. Visium spots are colored by nCounts, and myofibers are colored by area." width="700" style="display: block; margin: auto;"></p>
 <p>The larger myofibers seem to have fewer total counts, possibly
 because the larger size of these myofibers dilute the transcripts. If
 this is the case, then data normalization would be relevant to correct
@@ -372,7 +372,7 @@ and Visium spot, and compute their areas.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotSpatialFeature.html" class="external-link">plotSpatialFeature</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n_myofibers"</span>, <span class="st">"prop_myofibers"</span><span class="op">)</span>, </span>
 <span>                   colGeometryName <span class="op">=</span> <span class="st">"spotPoly"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-11-1.png" title="Plot of Visium spots in tissue in physical space, colored by number of myofibers intersecting each spot and proportion of area of each spot occupied by myofibers." alt="Plot of Visium spots in tissue in physical space, colored by number of myofibers intersecting each spot and proportion of area of each spot occupied by myofibers." width="768"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-11-1.png" title="Plot of Visium spots in tissue in physical space, colored by number of myofibers intersecting each spot and proportion of area of each spot occupied by myofibers." alt="Plot of Visium spots in tissue in physical space, colored by number of myofibers intersecting each spot and proportion of area of each spot occupied by myofibers." width="768" style="display: block; margin: auto;"></p>
 <p>The injury site infiltrated with immune cells have more nuclei; this
 is apparent from the H&amp;E image, but is quantified here.</p>
 <p>There is no one to one mapping between Visium spots and myofibers.
@@ -392,14 +392,14 @@ as to calculate the mean, median, or sum. This can be done with the
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># The gray spots don't intersect any myofiber</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotSpatialFeature.html" class="external-link">plotSpatialFeature</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="st">"mean_myofiber_area"</span>, <span class="st">"spotPoly"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-13-1.png" title="Plot of Visium spots in tissue in physical space, colored by the average area of myofibers that intersect each spot. The average area is higher near the mid-top right part of the tissue." alt="Plot of Visium spots in tissue in physical space, colored by the average area of myofibers that intersect each spot. The average area is higher near the mid-top right part of the tissue." width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-13-1.png" title="Plot of Visium spots in tissue in physical space, colored by the average area of myofibers that intersect each spot. The average area is higher near the mid-top right part of the tissue." alt="Plot of Visium spots in tissue in physical space, colored by the average area of myofibers that intersect each spot. The average area is higher near the mid-top right part of the tissue." width="700" style="display: block; margin: auto;"></p>
 <p>Now we can see how the mean area of myofibers intersecting each
 Visium spot relates to other aspects of the spots such as total counts
 and gene expression.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"mean_myofiber_area"</span>, y <span class="op">=</span> <span class="st">"nCounts"</span>, colour_by <span class="op">=</span> <span class="st">"n_myofibers"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Removed 36 rows containing missing values (geom_point).</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-14-1.png" title="Scatter plot with nCounts in the y axis and mean myofiber area in the x axis, where each point represents a Visium spot, colored by the number of myofibers intersecting the spot." alt="Scatter plot with nCounts in the y axis and mean myofiber area in the x axis, where each point represents a Visium spot, colored by the number of myofibers intersecting the spot." width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-14-1.png" title="Scatter plot with nCounts in the y axis and mean myofiber area in the x axis, where each point represents a Visium spot, colored by the number of myofibers intersecting the spot." alt="Scatter plot with nCounts in the y axis and mean myofiber area in the x axis, where each point represents a Visium spot, colored by the number of myofibers intersecting the spot." width="700" style="display: block; margin: auto;"></p>
 <p>The NAs are for spots not intersecting any myofibers, e.g. those in
 the inflammatory region. There seem to be two clusters: spots with
 smaller mean myofiber area and larger total counts, and spots with
@@ -409,10 +409,10 @@ that the myofibers are smaller is the reason why there are more of them
 intersecting each spot.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"nCounts"</span>, y <span class="op">=</span> <span class="st">"nGenes"</span>, colour_by <span class="op">=</span> <span class="st">"mean_myofiber_area"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-15-1.png" title="Scatter plot with nGenes in the y axis and nCounts in the x axis. Each point represents a Visium spot in tissue, colored by mean myofiber area." alt="Scatter plot with nGenes in the y axis and nCounts in the x axis. Each point represents a Visium spot in tissue, colored by mean myofiber area." width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-15-1.png" title="Scatter plot with nGenes in the y axis and nCounts in the x axis. Each point represents a Visium spot in tissue, colored by mean myofiber area." alt="Scatter plot with nGenes in the y axis and nCounts in the x axis. Each point represents a Visium spot in tissue, colored by mean myofiber area." width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"nCounts"</span>, y <span class="op">=</span> <span class="st">"nGenes"</span>, colour_by <span class="op">=</span> <span class="st">"n_myofibers"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-16-1.png" title="Scatter plot with nGenes in the y axis and nCounts in the x axis. Each point represents a Visium spot in tissue, colored by number of myofibers." alt="Scatter plot with nGenes in the y axis and nCounts in the x axis. Each point represents a Visium spot in tissue, colored by number of myofibers." width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-16-1.png" title="Scatter plot with nGenes in the y axis and nCounts in the x axis. Each point represents a Visium spot in tissue, colored by number of myofibers." alt="Scatter plot with nGenes in the y axis and nCounts in the x axis. Each point represents a Visium spot in tissue, colored by number of myofibers." width="700" style="display: block; margin: auto;"></p>
 <p>Mean myofiber area and number of myofibers per spot seem to be
 related to the two branches in the nGenes vs. nCounts plot. The upper
 branch includes the inflamed injury site with lots of immune cells and
@@ -427,11 +427,11 @@ proportion of mytochondrial counts?</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"nCounts"</span>, y <span class="op">=</span> <span class="st">"prop_mito"</span>, </span>
 <span>            colour_by <span class="op">=</span> <span class="st">"n_myofibers"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-17-1.png" width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"nCounts"</span>, y <span class="op">=</span> <span class="st">"prop_mito"</span>, </span>
 <span>            colour_by <span class="op">=</span> <span class="st">"prop_myofiber"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-18-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>How total UMI counts relate to proportion of mitochondrial counts
 here is very different from what we usually see in scRNA-seq data,
 i.e. a cluster of cells with low total counts and high proportion of
@@ -451,7 +451,7 @@ counts?</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"nCounts"</span>, y <span class="op">=</span> <span class="st">"prop_mito"</span>, </span>
 <span>            colour_by <span class="op">=</span> <span class="st">"mean_myofiber_area"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-19-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-19-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Visium spots intersecting with larger myofibers are mostly in the
 lower cluster, with lower proportion of mitochondrial counts. This seems
 consistent with that larger and more anaerobic myofibers tend to have
@@ -506,26 +506,26 @@ both the raw counts and the log normalized counts here.</p>
 <span><span class="op">}</span></span></code></pre></div>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_counts_logcounts</span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="va">markers</span><span class="op">[</span><span class="st">"I"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-22-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>There are indeed few Type I myofibers, and they tend to be
 smaller.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gene_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">sfe_tissue</span><span class="op">)</span><span class="op">[</span><span class="fu">rowData</span><span class="op">(</span><span class="va">sfe_tissue</span><span class="op">)</span><span class="op">$</span><span class="va">symbol</span> <span class="op">==</span> <span class="va">markers</span><span class="op">[</span><span class="st">"I"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"nCounts"</span>, y <span class="op">=</span> <span class="st">"prop_mito"</span>, </span>
 <span>            colour_by <span class="op">=</span> <span class="va">gene_id</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-23-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-23-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>The Type I myofibers also tend to have higher proportion of
 mitochondrial counts.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_counts_logcounts</span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="va">markers</span><span class="op">[</span><span class="st">"IIa"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-24-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-24-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Type IIa myofibers also tend to be clustered together on left side of
 the tissue.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gene_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">sfe_tissue</span><span class="op">)</span><span class="op">[</span><span class="fu">rowData</span><span class="op">(</span><span class="va">sfe_tissue</span><span class="op">)</span><span class="op">$</span><span class="va">symbol</span> <span class="op">==</span> <span class="va">markers</span><span class="op">[</span><span class="st">"IIa"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"nCounts"</span>, y <span class="op">=</span> <span class="st">"prop_mito"</span>, </span>
 <span>            colour_by <span class="op">=</span> <span class="va">gene_id</span>, by_exprs_values <span class="op">=</span> <span class="st">"logcounts"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-25-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-25-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Spots with Type IIa myofibers tend to have higher proportion of
 mitochondrial counts, mostly in the upper cluster in this plot. However,
 some of these spots are in the lower cluster. As Visium spots can
@@ -535,7 +535,7 @@ and some more anaerobic myofibers.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"mean_myofiber_area"</span>, y <span class="op">=</span> <span class="st">"prop_mito"</span>, </span>
 <span>            colour_by <span class="op">=</span> <span class="va">gene_id</span>, by_exprs_values <span class="op">=</span> <span class="st">"logcounts"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Removed 36 rows containing missing values (geom_point).</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-26-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-26-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Plotting proportion of mitochondrial counts vs. mean myofiber area,
 we also see two clusters, one with higher proportion of mitochondrial
 counts and smaller area, and another with lower proportion of
@@ -544,7 +544,7 @@ myofibers tend to have small area and larger proportion of mitochondrial
 counts.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_counts_logcounts</span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="va">markers</span><span class="op">[</span><span class="st">"IIb"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-27-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-27-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>While the raw counts suggest that Type IIb myofibers tend to
 aggregate at the top region of this section and away from Type IIa
 myofibers, data normalization made expression of Myh4 seem ubiquitous
@@ -553,7 +553,7 @@ even in regions without myofibers.</p>
 <code class="sourceCode R"><span><span class="va">gene_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">sfe_tissue</span><span class="op">)</span><span class="op">[</span><span class="fu">rowData</span><span class="op">(</span><span class="va">sfe_tissue</span><span class="op">)</span><span class="op">$</span><span class="va">symbol</span> <span class="op">==</span> <span class="va">markers</span><span class="op">[</span><span class="st">"IIb"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"nCounts"</span>, y <span class="op">=</span> <span class="st">"prop_mito"</span>, </span>
 <span>            colour_by <span class="op">=</span> <span class="va">gene_id</span>, by_exprs_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-28-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-28-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>In raw counts, spots with high Myh4 expression, indicating Type IIb,
 also tend to have somewhat high mitochondrial count proportion (still in
 the upper cluster), but not as high as Type IIa.</p>
@@ -561,16 +561,16 @@ the upper cluster), but not as high as Type IIa.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"mean_myofiber_area"</span>, y <span class="op">=</span> <span class="st">"prop_mito"</span>, </span>
 <span>            colour_by <span class="op">=</span> <span class="va">gene_id</span>, by_exprs_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Removed 36 rows containing missing values (geom_point).</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-29-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-29-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Type IIb myofibers tend to be larger than type IIa myofibers.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_counts_logcounts</span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="va">markers</span><span class="op">[</span><span class="st">"IIx"</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-30-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-30-1.png" width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gene_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">sfe_tissue</span><span class="op">)</span><span class="op">[</span><span class="fu">rowData</span><span class="op">(</span><span class="va">sfe_tissue</span><span class="op">)</span><span class="op">$</span><span class="va">symbol</span> <span class="op">==</span> <span class="va">markers</span><span class="op">[</span><span class="st">"IIx"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"nCounts"</span>, y <span class="op">=</span> <span class="st">"prop_mito"</span>, </span>
 <span>            colour_by <span class="op">=</span> <span class="va">gene_id</span>, by_exprs_values <span class="op">=</span> <span class="st">"logcounts"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-31-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-31-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>If the markers are correct, then Type IIx myofibers seem to
 colocalize with Type IIa in this dataset, or as in <a href="https://skeletalmusclejournal.biomedcentral.com/articles/10.1186/s13395-021-00269-2" class="external-link">scRNA-seq
 data</a>, not as clear cut as in protein expression, myofibers often
@@ -581,7 +581,7 @@ there maybe cell hybrids.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotColData.html" class="external-link">plotColData</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, x <span class="op">=</span> <span class="st">"mean_myofiber_area"</span>, y <span class="op">=</span> <span class="st">"prop_mito"</span>, </span>
 <span>            colour_by <span class="op">=</span> <span class="va">gene_id</span>, by_exprs_values <span class="op">=</span> <span class="st">"logcounts"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Removed 36 rows containing missing values (geom_point).</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-32-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-32-1.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 </div>
 </div>
@@ -621,14 +621,14 @@ associated with a <code>colGeometry</code>, along with the geometry of
 interest.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotColGraph.html" class="external-link">plotColGraph</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, colGraphName <span class="op">=</span> <span class="st">"visium"</span>, colGeometryName <span class="op">=</span> <span class="st">"spotPoly"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-34-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-34-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Similarly, the <code>plotAnnotGraph</code> function plots the graph
 associated with an <code>annotGeometry</code>, along with the geometry
 of interest.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotColGraph.html" class="external-link">plotAnnotGraph</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, annotGraphName <span class="op">=</span> <span class="st">"myofiber_poly2nb"</span>, </span>
 <span>               annotGeometryName <span class="op">=</span> <span class="st">"myofiber_simplified"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-35-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-35-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>There is no <code>plotRowGraph</code> yet since we haven’t worked
 with a dataset where spatial graphs related to genes are relevant,
 although the SFE object supports row graphs.</p>
@@ -919,7 +919,7 @@ p-values here are not corrected for multiple hypothesis testing.</p>
 <p>The results can be plotted:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotMoranMC.html" class="external-link">plotMoranMC</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nCounts"</span>, <span class="st">"nGenes"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-44-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-44-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>By default, the colorblind friendly palette from
 <code>dittoSeq</code> is used for categorical variables. The density is
 of Moran’s I from the simulations where the values are permuted and
@@ -933,7 +933,7 @@ so spatial autocorrelation for the same features can be compared across
 samples.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotMoranMC.html" class="external-link">plotMoranMC</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nCounts"</span>, <span class="st">"nGenes"</span><span class="op">)</span>, facet_by <span class="op">=</span> <span class="st">"feature"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-45-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-45-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Each function for Moran MC has a Geary’s C equivalent
 (e.g. <code>runGearyMC</code>).</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
@@ -941,7 +941,7 @@ samples.</p>
 <span>                             colGraphName <span class="op">=</span> <span class="st">"visium"</span>, nsim <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotMoranMC.html" class="external-link">plotMoranMC</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nCounts"</span>, <span class="st">"nGenes"</span><span class="op">)</span>, name <span class="op">=</span> <span class="st">"GearyMC"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-47-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-47-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Also see some myofiber morphological metrics</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sfe_tissue</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/calculateMoranMC.html" class="external-link">annotGeometryMoranMC</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, </span>
@@ -956,7 +956,7 @@ samples.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotMoranMC.html" class="external-link">plotMoranMC</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, </span>
 <span>            features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"area"</span>, <span class="st">"eccentricity"</span><span class="op">)</span>,</span>
 <span>            annotGeometryName <span class="op">=</span> <span class="st">"myofiber_simplified"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-49-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-49-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Here all 4 morphological metrics have positive spatial
 autocorrelation, but myofiber area is more strongly autocorrelated.</p>
 <p>This can also be done to gene expression, again, by default, using
@@ -968,14 +968,14 @@ Ensembl IDs, the human readable gene symbols are shown in the plots by
 default.</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotMoranMC.html" class="external-link">plotMoranMC</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, features <span class="op">=</span> <span class="va">hvgs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-51-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-51-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>The vertical lines for Car3 and Myh2 overlap but they’re not the same
 value (see results of <code>runMoransI</code> above). To show Ensembl
 IDs instead (note that the colors are not linked to the genes and are
 assigned to genes in alphabetical order of the symbol or ID):</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotMoranMC.html" class="external-link">plotMoranMC</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, features <span class="op">=</span> <span class="va">hvgs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, show_symbol <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-52-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-52-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>These genes have positive spatial autocorrelation that is stronger
 than total counts.</p>
 </div>
@@ -1001,7 +1001,7 @@ specifying the maximum order of neighbors.</p>
 <p>The results can be plotted with <code>plotCorrelogram</code></p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotCorrelogram.html" class="external-link">plotCorrelogram</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nCounts"</span>, <span class="st">"nGenes"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-54-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-54-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>The error bars are twice the standard deviation of the Moran’s I
 value. The standard deviation and p-values (null hypothesis is that
 Moran’s I is 0) come from <code>moran.test</code> (for Geary’s C
@@ -1018,7 +1018,7 @@ means p &lt; 0.01, and *** means p &lt; 0.001.</p>
 <span>                                 order <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotCorrelogram.html" class="external-link">plotCorrelogram</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nCounts"</span>, <span class="st">"nGenes"</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"C"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-56-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-56-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>For attributes of <code>annotGeometry</code>:</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sfe_tissue</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/calculateCorrelogram.html" class="external-link">annotGeometryCorrelogram</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, </span>
@@ -1029,7 +1029,7 @@ means p &lt; 0.01, and *** means p &lt; 0.001.</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotCorrelogram.html" class="external-link">plotCorrelogram</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"area"</span>, <span class="st">"eccentricity"</span><span class="op">)</span>,</span>
 <span>                annotGeometryName <span class="op">=</span> <span class="st">"myofiber_simplified"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-58-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-58-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>For myofiber area and convexity, Moran’s I goes up in second order
 neighbors, because in one region in this tissue section, there are many
 large myofibers and what seem like small myofibers sandwiched between
@@ -1040,7 +1040,7 @@ the large ones.</p>
 <span>                             BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotCorrelogram.html" class="external-link">plotCorrelogram</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="va">hvgs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-60-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-60-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>With more genes, the colors become hard to tell apart. In case the
 correlograms of different genes have different patterns, the
 correlograms can be clustered and colored with the cluster rather than
@@ -1067,7 +1067,7 @@ correlograms by anything other than feature or sample. The
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotCorrelogram.html" class="external-link">plotCorrelogram</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, features <span class="op">=</span> <span class="va">hvgs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, color_by <span class="op">=</span> <span class="va">corr_clusters</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"cluster"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-62-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-62-1.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="moran-scatter-plot">Moran scatter plot<a class="anchor" aria-label="anchor" href="#moran-scatter-plot"></a>
@@ -1088,7 +1088,7 @@ one feature at a time.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/moranPlot.html" class="external-link">moranPlot</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="st">"nCounts"</span>, colGraphName <span class="op">=</span> <span class="st">"visium"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in value[[3L]](cond): Too few points for stat_density2d, not plotting</span></span>
 <span><span class="co">#&gt; contours.</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-64-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-64-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>This plot is a <code>ggplot2</code> remake of the function to plot
 Moran scatter plots in <code>spdep</code>, and with contours to indicate
 point density to address overplotting. “Inflential” comes from <a href="https://rdrr.io/r/stats/influence.measures.html" class="external-link"><code>influence.measures</code></a>
@@ -1097,7 +1097,7 @@ only the influential points are plotted individually.</p>
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/moranPlot.html" class="external-link">moranPlot</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="st">"nCounts"</span>, colGraphName <span class="op">=</span> <span class="st">"visium"</span>, filled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Ignoring unknown parameters: colGraphName</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-65-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-65-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>The influential points can be shown in space</p>
 <div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">colData</span><span class="op">(</span><span class="va">sfe_tissue</span><span class="op">)</span><span class="op">$</span><span class="va">nCounts_moranPlot_inf</span> <span class="op">&lt;-</span> </span>
@@ -1105,7 +1105,7 @@ only the influential points are plotted individually.</p>
 <div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotSpatialFeature.html" class="external-link">plotSpatialFeature</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="st">"nCounts_moranPlot_inf"</span>, </span>
 <span>                   colGeometryName <span class="op">=</span> <span class="st">"spotPoly"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-67-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-67-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>For <code>annotGeometry</code>:</p>
 <div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sfe_tissue</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/calculateMoranPlot.html" class="external-link">annotGeometryMoranPlot</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, features <span class="op">=</span> <span class="st">"area"</span>,</span>
@@ -1115,7 +1115,7 @@ only the influential points are plotted individually.</p>
 <div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/moranPlot.html" class="external-link">moranPlot</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="st">"area"</span>, annotGeometryName <span class="op">=</span> <span class="st">"myofiber_simplified"</span>, </span>
 <span>          graphName <span class="op">=</span> <span class="st">"myofiber_poly2nb"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-69-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-69-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Singletons have no neighbors and are circled in this plot. There
 appears to be clusters in this plot, of small myofibers next to other
 small myofibers, larger ones next to larger ones, and small ones next to
@@ -1129,7 +1129,7 @@ larger ones. To identify clusters on the Moran plot:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/moranPlot.html" class="external-link">moranPlot</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="st">"area"</span>, graphName <span class="op">=</span> <span class="st">"myofiber_poly2nb"</span>, </span>
 <span>          color_by <span class="op">=</span> <span class="va">clusts</span><span class="op">$</span><span class="va">area</span>, annotGeometryName <span class="op">=</span> <span class="st">"myofiber_simplified"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"cluster"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-71-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-71-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Again, the clusters can be plotted in space</p>
 <div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># There's an empty geometry</span></span>
@@ -1142,7 +1142,7 @@ larger ones. To identify clusters on the Moran plot:</p>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">annotGeometry</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="st">"myofiber_simplified"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">area_moranPlot_cluster</span><span class="op">)</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">ditto_colors</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-73-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-73-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Clusters in the Moran plot delineate different regions in the tissue.
 Note that the clusters are paired, because, for example, when a larger
 myofiber is a neighbor of a smaller myofiber, then that smaller myofiber
@@ -1153,7 +1153,7 @@ graph is undirected.</p>
 <code class="sourceCode R"><span><span class="va">sfe_tissue</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/calculateMoranPlot.html" class="external-link">runMoranPlot</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="st">"Myh1"</span>, colGraphName <span class="op">=</span> <span class="st">"visium"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/moranPlot.html" class="external-link">moranPlot</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="st">"Myh1"</span>, graphName <span class="op">=</span> <span class="st">"visium"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-75-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-75-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>There are no singletons here. Some Visium spots have neighbors that
 don’t express Myh1 but spots that don’t express Myh1 usually have at
 least some neighbors that do. There are 2 main clusters for spots whose
@@ -1163,12 +1163,12 @@ neighbors do express Myh1.</p>
 <span><span class="va">clusts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/clusterMoranPlot.html" class="external-link">clusterMoranPlot</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="st">"Myh1"</span>, BLUSPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/bluster/man/KmeansParam-class.html" class="external-link">KmeansParam</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/moranPlot.html" class="external-link">moranPlot</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="st">"Myh1"</span>, graphName <span class="op">=</span> <span class="st">"visium"</span>, color_by <span class="op">=</span> <span class="va">clusts</span><span class="op">$</span><span class="va">Myh1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-77-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-77-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Again, plot the clusters in space</p>
 <div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">colData</span><span class="op">(</span><span class="va">sfe_tissue</span><span class="op">)</span><span class="op">$</span><span class="va">Myh1_moranPlot_clust</span> <span class="op">&lt;-</span> <span class="va">clusts</span><span class="op">$</span><span class="va">Myh1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotSpatialFeature.html" class="external-link">plotSpatialFeature</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="st">"Myh1_moranPlot_clust"</span>, colGeometryName <span class="op">=</span> <span class="st">"spotPoly"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Voyager_files/figure-html/unnamed-chunk-78-1.png" width="700"></p>
+<p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-78-1.png" width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.2.0 (2022-04-22)</span></span>
