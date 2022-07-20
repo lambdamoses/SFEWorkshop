@@ -22,7 +22,7 @@ devtools::install_github("pachterlab/Voyager")
 
 ## Using the Docker image
 ```
-docker run -e PASSWORD=abc -p 8787:8787 lambdamoses/sfeworkshop:latest
+docker run -e PASSWORD=abc -p 8787:8787 ghcr.io/lambdamoses/sfeworkshop:latest
 ```
 
 Once running, navigate to http://localhost:8787/ and then login with username rstudio and password abc.

@@ -5,7 +5,7 @@ author:
       email: "dlu2@caltech.edu"
     - name: "Lior Pachter"
       email: "lpachter@caltech.edu"
-date: "r Sys.Date()"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{1. From geospatial to spatial transcriptomics}
@@ -52,7 +52,7 @@ for (i in seq_along(bboxes)) {
 
 ```{r, fig.width=8, fig.height=2}
 ggplot(states_sub, aes(fill = medhhincome)) + geom_sf() +
-  theme_void() +
+  theme_void(14) +
   facet_wrap(~ state_name, nrow = 1)
 ```
 
@@ -71,13 +71,13 @@ knitr::include_graphics("seattle_map.png")
 # Introduction to spatial transcriptomics data
 Back to spatial transcriptomics. A working definition of "spatial transcriptomics" is any attempt to quantify the transcripts of more genes than can be done in one round of fluorescent *in situ* hybridization (FISH) while preserving the spatial context of the gene expression in the tissue. Since 2018, interest in spatial transcriptomics -- in both data collection and data analysis -- has grown drastically. 
 ```{r, fig.cap="Number of publication over time for current era data collection and data analysis. Bin width is 120 days. The x-shaped points show the number of publications from the last bin, which is not yet full."}
-knitr::include_graphics("https://pachterlab.github.io/LP_2021/07-current_analysis_files/figure-html/analysis-current-1.png", dpi = 300)
+knitr::include_graphics("analysis-current-1.png", dpi = 200)
 ```
 
 Based on how the spatial context is preserved, spatial transcriptomics data collection technologies fall into 5 categories, sorted by popularity (plot showing number of publications per category), though there are gray areas:
 
 ```{r, fig.cap="Techniques used by at least 3 institutions and the number of institutions that have used them."}
-knitr::include_graphics("https://pachterlab.github.io/LP_2021/04-current_files/figure-html/n-insts-1.png", dpi = 300)
+knitr::include_graphics("n-insts-1.png", dpi = 200)
 ```
 
 1. Next generation sequencing (NGS) with spatial barcoding, where spatial locations of the barcodes are known, such as 10X Visium, Slide-seq, and Stereo-seq. Many of these methods, such as the popular Visium, do not have single cell resolution. Hence cell type deconvolution is commonly performed.

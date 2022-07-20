@@ -43,4 +43,4 @@ Remotes:
 URL: https://lambdamoses.github.io/SFEWorkshop/
 BugReports: https://github.com/lambdamoses/SFEWorkshop/issues
 VignetteBuilder: knitr
-DockerImage: lambdamoses/sfeworkshop:latest
+DockerImage: ghcr.io/lambdamoses/sfeworkshop:latest
