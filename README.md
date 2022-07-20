@@ -11,6 +11,15 @@ Here we demonstrate the [`SpatialFeatureExperiment`](https://github.com/pachterl
 * Familiarity with [`SingleCellExperiment`](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html) and preferably also `SpatialExperiment` classes
 * Familiarity with `sf` is preferable for in depth data analyses using SFE but optional for this workshop
 
+## Installation
+We plan to submit the packages presented in this workshop to Bioconductor. Before they get accepted in Bioconductor, they can be installed from GitHub:
+
+```
+devtools::install_github("pachterlab/SFEData")
+devtools::install_github("pachterlab/SpatialFeatureExperiment")
+devtools::install_github("pachterlab/Voyager")
+```
+
 ## Using the Docker image
 ```
 docker run -e PASSWORD=abc -p 8787:8787 lambdamoses/sfeworkshop:latest

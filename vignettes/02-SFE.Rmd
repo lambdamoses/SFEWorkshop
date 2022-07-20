@@ -1,8 +1,8 @@
 ---
-title: "SFE"
+title: "2. SpatialFeatureExperiment"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{SFE}
+  %\VignetteIndexEntry{2. SpatialFeatureExperiment}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -48,12 +48,12 @@ library(Matrix)
 User interfaces to get or set the geometries and spatial graphs emulate those of `reducedDims` and `row/colPairs` in `SingleCellExperiment`. Column and row geometries also emulate `reducedDims` in internal implementation, while annotation geometries and spatial graphs differ. 
 
 ### Column and row
-Column and row geometries can be get or set with the `dimGeometries` (multiple items) or `dimGeometry` (one item) function. The `MARGIN` argument is as in the `apply` function: `MARGIN = 1` means row, and `MARGIN = 2` means column.
+Column and row geometries can be get or set with the `dimGeometries` (multiple items, covered in [the `SpatialFeatureExperiment` vignette](https://pachterlab.github.io/SpatialFeatureExperiment/dev/articles/SFE.html)) or `dimGeometry` (one item, covered here) function. The `MARGIN` argument is as in the `apply` function: `MARGIN = 1` means row, and `MARGIN = 2` means column. Or equivalently, use `colGeometry/ies` and `rowGeometry/ies` in place of specifying the `MARGIN`.
 
 `dimGeometry` gets or sets one particular geometry by name of index.
 ```{r}
 # Get Visium spot polygons
-(spots <- dimGeometry(sfe, "spotPoly", MARGIN = 2))
+(spots <- colGeometry(sfe, "spotPoly"))
 ```
 
 ```{r}
@@ -62,31 +62,13 @@ plot(st_geometry(spots))
 
 ```{r}
 # Setter
-dimGeometry(sfe, "foobar", MARGIN = 2) <- spots
-```
-
-`dimGeometries` gets or sets all geometry of the given margin. 
-```{r}
-# Getter, all geometries of one margin
-(cgs <- dimGeometries(sfe, MARGIN = 2))
-```
-
-```{r}
-# Setter, all geometries
-dimGeometries(sfe, MARGIN = 2) <- cgs
+colGeometry(sfe, "foobar") <- spots
 ```
 
 `dimGeometryNames` gets or sets the names of the geometries
 ```{r}
-(cg_names <- dimGeometryNames(sfe, MARGIN = 2))
+(cg_names <- colGeometryNames(sfe))
 ```
-
-```{r}
-# Setter
-dimGeometryNames(sfe, MARGIN = 2) <- cg_names
-```
-
-`colGeometry(sfe, "spotPoly")`, `colGeometries(sfe)`, and `colGeometryNames(sfe)` are shorthands for `dimGeometry(sfe, "spotPoly", MARGIN = 2)`, `dimGeometries(sfe, MARGIN = 2)`, and `dimGeometryNames(sfe, MARGIN = 2)` respectively. Similarly, `rowGeometr*(sfe, ...)` is a shorthand of `dimGeometr*(sfe, ..., MARGIN = 1)`.
 
 There are shorthands for some specific column or row geometries. For example, `spotPoly(sfe)` is equivalent to `colGeometry(sfe, "spotPoly")` for Visium spot polygons, and `txSpots(sfe)` is equivalent to `rowGeometry(sfe, "txSpots")` for transcript spots in single molecule technologies. 
 
@@ -101,7 +83,7 @@ spotPoly(sfe) <- spots
 ```
 
 ### Annotation
-Annotation geometries can be get or set with `annotGeometries` or `annotGeometry`. In column or row geometries, the number of rows of the `sf` data frame (i.e. the number of geometries in the data frame) is constrained by the number of rows or columns of the gene count matrix respectively, because just like `rowData` and `colData`, each row of a `rowGeometry` or `colGeometry` `sf` data frame must correspond to a row or column of the gene count matrix respectively. In contrast, an `annotGeometry` `sf` data frame can have any dimension, not constrained by the dimension of the gene count matrix. Similar to column and row geometries, annotation geometries have `annotGeometry`, `annotGeometries`, and `annotGeometryNames` getters and setters. `annotGeometries` is covered in the `SpatialFeatureExperiment` vignette.
+Annotation geometries can be get or set with `annotGeometries` or `annotGeometry`. In column or row geometries, the number of rows of the `sf` data frame (i.e. the number of geometries in the data frame) is constrained by the number of rows or columns of the gene count matrix respectively, because just like `rowData` and `colData`, each row of a `rowGeometry` or `colGeometry` `sf` data frame must correspond to a row or column of the gene count matrix respectively. In contrast, an `annotGeometry` `sf` data frame can have any dimension, not constrained by the dimension of the gene count matrix. Similar to column and row geometries, annotation geometries have `annotGeometry`, `annotGeometries`, and `annotGeometryNames` getters and setters. `annotGeometries` is covered in [the `SpatialFeatureExperiment` vignette](https://pachterlab.github.io/SpatialFeatureExperiment/dev/articles/SFE.html).
 
 ```{r}
 # Getter, by name or index
@@ -384,6 +366,7 @@ bbox(sfe, sample_id = "Vis5A")
 To move the coordinates:
 ```{r}
 sfe_moved <- removeEmptySpace(sfe, sample_id = "Vis5A")
+bbox(sfe_moved, sample_id = "Vis5A")
 ```
 
 The original bounding box before moving is stored within the SFE object, which can be read by `dimGeometry` setters so newly added geometries can have coordinates moved as well; this behavior can be turned off with the optional argument `translate = FALSE` in `dimGeometry` setters.

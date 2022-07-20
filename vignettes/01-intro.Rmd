@@ -16,45 +16,82 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  echo = FALSE, message = FALSE
 )
+```
+
+```{r}
+library(urbnmapr)
+library(ggplot2)
+library(sf)
 ```
 
 # An analogy from geographical space
 Data from bulk RNA-seq, single cell RNA-seq (scRNA-seq), and spatial transcriptomics all come from originally spatially organized tissues (except for blood), where such spatial organization plays a role in the properties and functions of the tissues. For this reason, a geographical analogy may be more adequate than the traditional analogy of the smoothie vs. fruit salad vs. tart. 
 
-Many of you attending this conference in person have traveled to Seattle, and might explore Seattle after the talks or the entire conference. Bulk RNA-seq is like average values over the entire Washington state. It gives some information, such as that Washington tends to be cooler and more humid than California. However, this is not good enough for a tourist. 
+Many of you attending this conference in person have traveled to Seattle, and might explore Seattle after the talks or the entire conference. Bulk RNA-seq is like average values over the entire Washington state. It gives some information, such as that Washington tends to be cooler and more humid than California, and that median household income in California and Washington are higher than that in Nevada and Oregon. However, a tourist would like a higher resolution.
 
 ```{r}
-# The state average plot, and a plot of states separated from each other
+data("statedata")
 ```
 
-Non-spatial scRNA-seq is like tourist attractions in Seattles separated from their neighborhoods. There's the Space Needle, the Museum of Pop Culture, Chihuli glass museum, Smith Tower, Pike Place, Museum of Flight, and etc. These tourist attractions can also be classified based on their characteristics, such as architectural style, function, and era of construction. Dimension reduction can be performed on these numerous characteristics. This would be of more interest to an avid tourist who really wants to get to know Seattle than the state level averages. 
-
 ```{r}
-# Figure with photos of Seattle randomly scattered and dissociated from space
+states_sf <- get_urbn_map("states", sf = TRUE)
+states_sf <- st_transform(states_sf, crs = 4326)
 ```
 
-Spatial transcriptomics is like studying a map of Seattle. How to get to these tourist attractions? When you look at the map, you find that certain kinds of tourist attractions tend to cluster in space, such as the cluster of museums in the vicinity of Space Needle and the cluster of older buildings around Smith Tower. Different regions of Seattle with different vibes and functions are also annotated on the map. There are historical reasons that led to such spatial regions and clustering, such as the World Expo that gave rise to the Space Needle. Here we see how locating the tourist attractions in space point to a deeper understanding of the properties of Seattle.
 ```{r}
-# Map of Seattle Downtown with tourist attractions and neighborhoods labeled
+states_sf <- merge(states_sf, statedata, by = c("state_name", "state_fips"))
+states_sub <- states_sf[states_sf$state_name %in% c("California", "Oregon", "Washington", "Nevada"),]
+bboxes <- lapply(states_sub$geometry, st_bbox)
+for (i in seq_along(bboxes)) {
+  states_sub$geometry[i] <- states_sub$geometry[i] - bboxes[[i]][c("xmin", "ymin")]
+}
+```
+
+```{r, fig.width=6, fig.height=1.5}
+ggplot(states_sub, aes(fill = medhhincome)) + geom_sf() +
+  theme_void() +
+  facet_wrap(~ state_name, nrow = 1)
+```
+
+Non-spatial scRNA-seq is like tourist attractions in Seattle separated from their neighborhoods. There's the Space Needle, the Museum of Pop Culture, Chihuli glass museum, Smith Tower, Pike Place, Museum of Flight, and etc. These tourist attractions can also be classified based on their characteristics, such as architectural style, function, and era of construction. Dimension reduction can be performed on these numerous characteristics. This would be of more interest to an avid tourist who really wants to get to know Seattle than the state level averages. 
+
+```{r}
+knitr::include_graphics("seattle_attractions.png")
+```
+
+How to get to these tourist attractions? When you look at the map, you find that certain kinds of tourist attractions tend to cluster in space, such as the cluster of museums in the vicinity of Space Needle and the cluster of older buildings around Smith Tower. Different regions of Seattle with different vibes and functions are also annotated on the map. There are historical reasons that led to such spatial regions and clustering, such as the 1962 World's Fair that gave rise to the Space Needle. Here we see how locating the tourist attractions in space point to a deeper understanding of the properties of Seattle. Spatial transcriptomics is like studying a map of Seattle. 
+```{r}
+knitr::include_graphics("seattle_map.png")
 ```
 
 # Introduction to spatial transcriptomics data
 Back to spatial transcriptomics. A working definition of "spatial transcriptomics" is any attempt to quantify the transcripts of more genes than can be done in one round of fluorescent *in situ* hybridization (FISH) while preserving the spatial context of the gene expression in the tissue. Since 2018, interest in spatial transcriptomics -- in both data collection and data analysis -- has grown drastically. 
-```{r}
-# museumst plot
+```{r, fig.cap="Number of publication over time for current era data collection and data analysis. Bin width is 120 days. The x-shaped points show the number of publications from the last bin, which is not yet full."}
+knitr::include_graphics("https://pachterlab.github.io/LP_2021/07-current_analysis_files/figure-html/analysis-current-1.png")
 ```
 
-Based on how the spatial context is preserved, spatial transcriptomics data collection technologies fall into 5 categories, sorted by popularity (plot showing number of publications per category), though there are gray areas (get that figure from museumst paper):
+Based on how the spatial context is preserved, spatial transcriptomics data collection technologies fall into 5 categories, sorted by popularity (plot showing number of publications per category), though there are gray areas:
 
-1. Next generation sequencing (NGS) with spatial barcoding, where spatial locations of the barcodes are known, such as 10X Visium, Slide-seq, and Stereo-seq. 
+```{r, fig.cap="Techniques used by at least 3 institutions and the number of institutions that have used them."}
+knitr::include_graphics("https://pachterlab.github.io/LP_2021/04-current_files/figure-html/n-insts-1.png")
+```
+
+1. Next generation sequencing (NGS) with spatial barcoding, where spatial locations of the barcodes are known, such as 10X Visium, Slide-seq, and Stereo-seq. Many of these methods, such as the popular Visium, do not have single cell resolution. Hence cell type deconvolution is commonly performed.
 2. Region of interest (ROI) selection, where the act of specifying the ROIs itself defines the spatial locations, such as laser capture microdissection (LCM) followed by NGS and GeoMX DSP, where UV light is used to cleave probes only in the selected ROIs for quantification.
 3. Single molecular FISH, where each detected transcript can be seen as a discrete puncta and counted, such as MERFISH, seqFISH, and Molecular Cartography. Combinatorial barcoding over multiple rounds -- where fluorescent probes are hybridized to the transcripts or cDNAs and color or presence or absence of the probes are recorded and genes are identify by the sequence of colors or presence/absence -- is used to quantify more genes than easily discernible colors simultaneously. Datasets from highly multiplexed smFISH are usually not genome wide, and only quantify a few hundred genes at a time, though these technologies have been used in an increasing number of cells per experiment. (again, museumst plot)
 4. *In situ* sequencing (ISS), which is similar to smFISH as the transcripts are visualized as discrete puncta and counted. However, in ISS, the gene barcodes are determined by *in situ* sequencing, usually with sequencing by ligation, rather than with combinatorial barcoding. 
 5. Spatial context is not directly recorded, but computationally reconstructed, such as by recording pairwise spatial adjacency of cDNAs as in DNA microscopy. In addition, the term "spatial" is sometimes used to refer to sub-cellular resolution, such as in APEX-seq, where transcripts are "localized" or organelles; since no spatial coordinates are recorded, packages in this workshop are irrelevant to these technologies.
 
-In the literature when spatial transcriptomics data is generated, the data is often treated as non-spatial scRNA-seq data, and some data analysis methods for spatial transcriptomics data do not take the spatial information into account and are also intended for non-spatial scRNA-seq data (need to find the examples). However, the spatial information presents many opportunities unavailable to scRNA-seq, and this workshop will explore some of these opportunities. Among the opporunities are:
+```{r}
+knitr::include_graphics("https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41592-022-01409-2/MediaObjects/41592_2022_1409_Fig2_HTML.png")
+```
+
+Data analysis methods written for spatial transcriptomics can be broadly categorized as upstream and downtream. In upstream analysis, the raw data is converted into more usable forms, such as getting the gene count matrix from fastq files and cell type deconvolution of Visium spots. Downstream analysis begins with the more usable form of data for further biological inferences, such as finding spatially variable genes, spatial regions informed by gene expression, and cell-cell interactions. `SpatialFeatureExperiment`, as a way to represent data, is more upstream, while `Voyager`, for exploratory spatial data analysis (ESDA), is a little more downstream.
+
+In the literature when spatial transcriptomics data is generated, the data is often treated as non-spatial scRNA-seq data, and some data analysis methods for spatial transcriptomics data do not take the spatial information into account and are sometimes aimed at non-spatial data as well. For example, most cell type deconvolution methods don't take into account spatial autocorrelation in cell type distribution, and deconvolution methods for bulk RNA-seq is sometimes used for Visium data. However, the spatial information presents many opportunities unavailable to scRNA-seq, and this workshop will explore some of these opportunities. Among the opporunities are:
 
 1. Identifying spatial regions characterized by gene expression of cell types, just like neighborhoods in geographical space. Many methods have been written for this purpose.
 2. Tissue and cellular morphology is available along side transcriptomics, and may be related to gene expression. This is explored a little in this workshop.
@@ -63,7 +100,7 @@ In the literature when spatial transcriptomics data is generated, the data is of
 # Geospatial data types and how they may relate to spatial transcriptomics
 Geospatial data broadly fall into two types by representation: vector and raster. Vector data represents the world as points, lines, and polygons, specified by coordinates. For example, polygons would be specified by coordinates of the vertices. Raster data are basically images, where each pixel has a value, though unlike the typical RGB image, raster data can have many different layers analogous to the 3 channels in RGB images. Raster is common in remote sensing.
 ```{r}
-# Put my example images
+knitr::include_graphics("spatial_types.png")
 ```
 
 Vector data can be further classified by the processes generating the data:
@@ -85,8 +122,7 @@ If we can relate these data types to spatial transcriptomics, then we can take a
 
 Some geospatial data analysis methods have already been used in spatial transcriptomics, such as Gaussian process regression (which kriging is based on), Potts model, spatial point process analyses, conditional autoregressive models, and global and local variants of Moran's I. (get the references) However, these sptial transcriptomics packages and data analysis in the literature don't fully explore the opportunities given by the spatial information mentioned above, nor do they always take advantage of the existing software infrastructure originally built for geospatial data.
 
-This workshop presents the packages `SpatialFeatureExperiment` and `Voyager`, which bring more of the existing vector geospatial data analysis tools to spatial transcriptomics. `SpatialFeatureExperiment` (SFE) implements a new S4 class extending `SpatialExperiment` with `sf` data frames representing cell or Visium spot polygons, geometries of other objects, anatomical regions, and tissue boundaries, and spatial neighborhood graphs. `Voyager` to SFE is just like `scater`, `scran`, and `scuttle` to `SingleCellExperiment`, implementing basic exploratory spatial data analysis (ESDA) using well-established geospatial tools and plotting functions for geometries and ESDA results. 
-
+This workshop presents the packages `SpatialFeatureExperiment` and `Voyager`, which bring more of the existing vector geospatial data analysis tools to spatial transcriptomics. `SpatialFeatureExperiment` (SFE) implements a new S4 class extending `SpatialExperiment` with `sf` data frames representing cell or Visium spot polygons, geometries of other objects, anatomical regions, and tissue boundaries, and spatial neighborhood graphs. `Voyager` to SFE is just like `scater`, `scran`, and `scuttle` to `SingleCellExperiment`, implementing basic ESDA using well-established geospatial tools and plotting functions for geometries and ESDA results. 
 We focus on vector data here. Although the fluorsecent or H&E images are raster, features extracted from the images, such as cell and nuclei segmentation, and transcript spots, are more commonly used for downstream analyses. 
 
 # Limitations and future directions

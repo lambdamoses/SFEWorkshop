@@ -1,8 +1,8 @@
 ---
-title: "Voyager"
+title: "3. Voyager"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Voyager}
+  %\VignetteIndexEntry{3. Voyager}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -338,12 +338,11 @@ head(colFeatureData(sfe_tissue), 10)
 
 For `colData`, the results are added to `colFeatureData(sfe)`, and features for which Moran's I is not calculated have NA. The column names of `featureData` distinguishes between different samples (there's only one sample in this dataset), and are parsed by plotting functions. 
 
-To add the results to the SFE object, specifically for geometries: Here "area" is the area of the cross section of each myofiber as seen in this tissue section, "eccentricity" is the eccentricity of the ellipse fitted to each myofiber, convexity is the ratio between the actual area of each myofiber and that of its convex hull, and "sine_theta" is the sine of the angle of the fitted ellipse from a reference indicating orientation (sine because 0 degrees and 180 degrees are the same orientation though the values are very different).
+To add the results to the SFE object, specifically for geometries: Here "area" is the area of the cross section of each myofiber as seen in this tissue section and "eccentricity" is the eccentricity of the ellipse fitted to each myofiber.
 ```{r}
 # Remember zero.policy = TRUE since there're singletons
 sfe_tissue <- annotGeometryMoransI(sfe_tissue, 
-                                   features = c("area", "eccentricity", 
-                                                "convexity", "sine_theta"), 
+                                   features = c("area", "eccentricity"), 
                                    annotGeometryName = "myofiber_simplified",
                                    annotGraphName = "myofiber_poly2nb", 
                                    zero.policy = TRUE)
@@ -420,8 +419,7 @@ plotMoranMC(sfe_tissue, c("nCounts", "nGenes"), name = "GearyMC")
 Also see some myofiber morphological metrics
 ```{r}
 sfe_tissue <- annotGeometryMoranMC(sfe_tissue, 
-                                   features = c("area", "eccentricity", 
-                                                "convexity", "sine_theta"), 
+                                   features = c("area", "eccentricity"), 
                                    annotGeometryName = "myofiber_simplified",
                                    annotGraphName = "myofiber_poly2nb", 
                                    zero.policy = TRUE, nsim = 100)
@@ -430,7 +428,7 @@ sfe_tissue <- annotGeometryMoranMC(sfe_tissue,
 Specify `annotGeometryName` to make the `plotMoranMC` function look for results in the `annotGeometry` of interest.
 ```{r}
 plotMoranMC(sfe_tissue, 
-            features = c("area", "eccentricity", "convexity", "sine_theta"),
+            features = c("area", "eccentricity"),
             annotGeometryName = "myofiber_simplified")
 ```
 
@@ -484,15 +482,14 @@ plotCorrelogram(sfe_tissue, c("nCounts", "nGenes"), method = "C")
 For attributes of `annotGeometry`:
 ```{r}
 sfe_tissue <- annotGeometryCorrelogram(sfe_tissue, 
-                                       features = c("area", "eccentricity",
-                                                    "convexity", "sine_theta"),
+                                       features = c("area", "eccentricity"),
                                        annotGeometryName = "myofiber_simplified",
                                        annotGraphName = "myofiber_poly2nb",
                                        zero.policy = TRUE, order = 10)
 ```
 
 ```{r}
-plotCorrelogram(sfe_tissue, c("area", "eccentricity", "convexity", "sine_theta"),
+plotCorrelogram(sfe_tissue, c("area", "eccentricity"),
                 annotGeometryName = "myofiber_simplified")
 ```
 
@@ -500,24 +497,24 @@ For myofiber area and convexity, Moran's I goes up in second order neighbors, be
 
 For gene expression
 ```{r}
-sfe_tissue <- runCorrelogram(sfe_tissue, hvgs[1:15], colGraphName = "visium", order = 10,
+sfe_tissue <- runCorrelogram(sfe_tissue, hvgs[1:5], colGraphName = "visium", order = 10,
                              BPPARAM = MulticoreParam(2))
 ```
 
 ```{r}
-plotCorrelogram(sfe_tissue, hvgs[1:15])
+plotCorrelogram(sfe_tissue, hvgs[1:5])
 ```
 
 With more genes, the colors become hard to tell apart. In case the correlograms of different genes have different patterns, the correlograms can be clustered and colored with the cluster rather than gene. In the example here, the genes plotted all have similar correlogram patterns, though some seem to decay past the 8th order more quickly than others. Just to demonstrate the clustering:
 ```{r}
 set.seed(29)
-corr_clusters <- clusterCorrelograms(sfe_tissue, hvgs[1:15], BLUSPARAM = KmeansParam(3))
+corr_clusters <- clusterCorrelograms(sfe_tissue, hvgs[1:5], BLUSPARAM = KmeansParam(2))
 head(corr_clusters)
 ```
 
 The `color_by` argument can be used to color the correlograms by anything other than feature or sample. The `color_by` argument can be a column name in `rowData`, or a vector the same length as the `features` argument (as in this example).
 ```{r}
-plotCorrelogram(sfe_tissue, features = hvgs[1:15], color_by = corr_clusters$cluster) +
+plotCorrelogram(sfe_tissue, features = hvgs[1:5], color_by = corr_clusters$cluster) +
   labs(color = "cluster")
 ```
 
