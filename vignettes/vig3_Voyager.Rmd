@@ -130,9 +130,6 @@ plotSpatialFeature(sfe_tissue, "mean_myofiber_area", "spotPoly")
 ```
 
 Now we can see how the mean area of myofibers intersecting each Visium spot relates to other aspects of the spots such as total counts and gene expression.
-```{r, fig.alt="Scatter plot with nCounts in the y axis and mean myofiber area in the x axis, where each point represents a Visium spot, colored by the number of myofibers intersecting the spot."}
-plotColData(sfe_tissue, x = "mean_myofiber_area", y = "nCounts", colour_by = "n_myofibers")
-```
 
 The NAs are for spots not intersecting any myofibers, e.g. those in the inflammatory region. There seem to be two clusters: spots with smaller mean myofiber area and larger total counts, and spots with larger mean myofiber area and smaller total counts. Indeed, spots with smaller mean myofiber area tend to have a larger number of myofibers; that the myofibers are smaller is the reason why there are more of them intersecting each spot.
 
@@ -146,31 +143,8 @@ plotColData(sfe_tissue, x = "nCounts", y = "nGenes", colour_by = "n_myofibers")
 
 Mean myofiber area and number of myofibers per spot seem to be related to the two branches in the nGenes vs. nCounts plot. The upper branch includes the inflamed injury site with lots of immune cells and hence nuclei and devoid of myofibers and the adjacent region with larger myofibers.
 
-### Proportion of mitochondrial counts
-How does the number of myofibers relate to total counts and proportion of mytochondrial counts?
-```{r}
-plotColData(sfe_tissue, x = "nCounts", y = "prop_mito", 
-            colour_by = "n_myofibers")
-```
-
-```{r}
-plotColData(sfe_tissue, x = "nCounts", y = "prop_mito", 
-            colour_by = "prop_myofiber")
-```
-
-How total UMI counts relate to proportion of mitochondrial counts here is very different from what we usually see in scRNA-seq data, i.e. a cluster of cells with low total counts and high proportion of mitochondrial counts. Here we see two clusters, one with lower total counts and lower proportion of mitochondrial counts, and another higher in both. The two clusters seem to be associated with spots being in myofibers, as spots in the upper cluster tend to intersect with a larger number of myofibers. However, some spots in the lower cluster are also entirely within myofibers, but they tend to have a smaller number of myofibers. This might be due to different types of myofibers. The tibialis anterior is a fast twitch muscle with predominantly type II myofibers. Type IIx myofibers are more anaerobic, have larger diameters, and have fewer mitochondria. Type IIa myofibers are more aerobic, have smaller diameters, and have more mitochondria.
-
-How does myofiber area relate to proportion of mitochondrial counts?
-
-```{r}
-plotColData(sfe_tissue, x = "nCounts", y = "prop_mito", 
-            colour_by = "mean_myofiber_area")
-```
-
-Visium spots intersecting with larger myofibers are mostly in the lower cluster, with lower proportion of mitochondrial counts. This seems consistent with that larger and more anaerobic myofibers tend to have fewer mitochondria, but we'll check the myofiber type marker genes to verify.
-
 ### Myofiber types
-Marker genes: Myh7 (Type I), Myh2 (Type IIa), Myh4 (Type IIb), Myh1 (Type IIx), from [this protocol](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5526362/)
+Marker genes: Myh7 (Type I, slow twitch, aerobic), Myh2 (Type IIa, fast twitch, somewhat aerobic), Myh4 (Type IIb, fast twitch, anareobic), Myh1 (Type IIx, fast twitch, anaerobic), from [this protocol](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5526362/)
 ```{r}
 markers <- c(I = "Myh7", IIa = "Myh2", IIb = "Myh4", IIx = "Myh1")
 ```
@@ -202,15 +176,7 @@ plot_counts_logcounts <- function(sfe, feature) {
 plot_counts_logcounts(sfe_tissue, markers["I"])
 ```
 
-There are indeed few Type I myofibers, and they tend to be smaller.
-```{r}
-gene_id <- rownames(sfe_tissue)[rowData(sfe_tissue)$symbol == markers["I"]]
-plotColData(sfe_tissue, x = "nCounts", y = "prop_mito", 
-            colour_by = gene_id)
-```
-
-The Type I myofibers also tend to have higher proportion of mitochondrial counts.
-
+Type IIa myofibers
 ```{r}
 plot_counts_logcounts(sfe_tissue, markers["IIa"])
 ```
@@ -253,23 +219,6 @@ plotColData(sfe_tissue, x = "mean_myofiber_area", y = "prop_mito",
 
 Type IIb myofibers tend to be larger than type IIa myofibers.
 
-```{r}
-plot_counts_logcounts(sfe_tissue, markers["IIx"])
-```
-
-```{r}
-gene_id <- rownames(sfe_tissue)[rowData(sfe_tissue)$symbol == markers["IIx"]]
-plotColData(sfe_tissue, x = "nCounts", y = "prop_mito", 
-            colour_by = gene_id, by_exprs_values = "logcounts")
-```
-
-If the markers are correct, then Type IIx myofibers seem to colocalize with Type IIa in this dataset, or as in [scRNA-seq data](https://skeletalmusclejournal.biomedcentral.com/articles/10.1186/s13395-021-00269-2), not as clear cut as in protein expression, myofibers often coexpress Myh1 and Myh2 transcripts, but Type IIa myofibers have greater proportion of Myh2 and Type IIx have greater proportion of Myh1 and there maybe cell hybrids.
-
-```{r}
-plotColData(sfe_tissue, x = "mean_myofiber_area", y = "prop_mito", 
-            colour_by = gene_id, by_exprs_values = "logcounts")
-```
-
 # Spatial neighborhood graphs
 A spatial neighborhood graph is required to compute spatial dependency metrics such as Moran's I and Geary's C. The `SpatialFeatureExperiment` package wraps methods in `spdep` to find spatial neighborhood graphs, which are stored within the SFE object (see `spdep` documentation for [`gabrielneigh`](https://r-spatial.github.io/spdep/reference/graphneigh.html), [`knearneigh`](https://r-spatial.github.io/spdep/reference/knearneigh.html), [`poly2nb`](https://r-spatial.github.io/spdep/reference/poly2nb.html), and [`tri2nb`](https://r-spatial.github.io/spdep/reference/tri2nb.html)). The `Voyager` package then uses these graphs for spatial dependency analyses, again based on `spdep` in this first version, but methods from other geospatial packages, some of which also use the spatial neighborhood graphs, may be added later as needed.
 
@@ -296,6 +245,10 @@ plotAnnotGraph(sfe_tissue, annotGraphName = "myofiber_poly2nb",
 There is no `plotRowGraph` yet since we haven't worked with a dataset where spatial graphs related to genes are relevant, although the SFE object supports row graphs.
 
 # Exploratory _spatial_ data analysis
+Tobler's first law of geography:
+
+> Everything is related to everything else. But near things are more related than distant things.
+
 All spatial autocorrelation metrics in this package can be computed directly on a vector or a matrix rather than an SFE object. The user interface emulates those of dimension reductions in the `scater` package (e.g. `calculateUMAP` that takes in a matrix or SCE object and returns a matrix, and `runUMAP` that takes in an SCE object and adds the results to the `reducedDims` field of the SCE object). So `calculate*` functions take in a matrix or an SFE object and directly return the results (format of the results depends on the structure of the results), while `run*` functions take in an SFE object and add the results to the object.
 
 ## Univariate
@@ -379,13 +332,7 @@ There's only one column for K since it's the same for Moran's I and Geary's C. H
 ### Permutation testing
 Is the spatial autocorrelation statistically significant? The `moran.test` function in `spdep` can give an analytic p-value but the p-value would not be accurate if the data is not normally distributed. As gene expression data is generally not normally distributed and data normalization doesn't necessarily make the data that close to a normal distribution, permutation testing is used in this package to test the significance of Moran's I and Geary's C, wrapping [`moran.mc` in `spdep`](https://r-spatial.github.io/spdep/reference/moran.mc.html). Just like Moran's I, there's `calculateMoranMC` and `calculateGearyMC` functions to directly return the results, and `colDataMoranMC`, `colGeometryMoranMC`, `annotGeometryMoranMC`, and `runMoranMC` to add the results to the SFE object. MC stands for Monte Carlo. The `nsim` argument specifies the number of simulations. 
 
-For matrices, the results are a named list, each element of which is for each feature.
-```{r}
-calculateMoranMC(t(colData(sfe_tissue)[,c("nCounts", "nGenes")]), 
-                 listw = colGraph(sfe_tissue, "visium"), nsim = 100)
-```
-
-Or add it to the SFE object
+Add the results to the SFE object
 ```{r}
 sfe_tissue <- colDataMoranMC(sfe_tissue, features = c("nCounts", "nGenes"), 
                              colGraphName = "visium", nsim = 100)
@@ -401,10 +348,7 @@ plotMoranMC(sfe_tissue, c("nCounts", "nGenes"))
 
 By default, the colorblind friendly palette from `dittoSeq` is used for categorical variables. The density is of Moran's I from the simulations where the values are permuted and disconnected from spatial locations, and the vertical line is the actual Moran's I value. The simulation indicates that the spatial autocorrelation is significant. 
 
-When there're multiple samples, the plot will by default be facetted by sample. But it can also be facetted by feature; in this case, when there're multiple samples, samples will be colored instead of features so spatial autocorrelation for the same features can be compared across samples.
-```{r}
-plotMoranMC(sfe_tissue, c("nCounts", "nGenes"), facet_by = "feature")
-```
+
 
 Each function for Moran MC has a Geary's C equivalent (e.g. `runGearyMC`). 
 ```{r}
@@ -444,155 +388,28 @@ Although the row names of `sfe_tissue` are actually Ensembl IDs, the human reada
 plotMoranMC(sfe_tissue, features = hvgs[1:5])
 ```
 
-The vertical lines for Car3 and Myh2 overlap but they're not the same value (see results of `runMoransI` above). To show Ensembl IDs instead (note that the colors are not linked to the genes and are assigned to genes in alphabetical order of the symbol or ID):
-
-```{r}
-plotMoranMC(sfe_tissue, features = hvgs[1:5], show_symbol = FALSE)
-```
-
-These genes have positive spatial autocorrelation that is stronger than total counts.
+The vertical lines for Car3 and Myh2 overlap but they're not the same value (see results of `runMoransI` above). These genes have positive spatial autocorrelation that is stronger than total counts.
 
 ### Correlogram
 What's the length scale of the spatial autocorrelation? In a correlogram, spatial autocorrelation of higher orders of neighbors (e.g. second order neighbors are neighbors of neighbors) is calculated to see how it decays over the orders. In Visium, with the regular hexagonal grid, order of neighbors is a proxy for distance. For more irregular patterns such as single cells, different methods to find the spatial neighbors may give different results. Functions to compute correlograms wrap [`sp.correlogram` in `spdep`](https://r-spatial.github.io/spdep/reference/sp.correlogram.html), and have the same pattern of `calculate*` and `run*` as the Moran's I and permutation test functions, except for the `order` argument specifying the maximum order of neighbors.
 
 For `colData`, Moran's I correlogram:
 ```{r}
-sfe_tissue <- colDataCorrelogram(sfe_tissue, c("nCounts", "nGenes"),
-                                 colGraphName = "visium", order = 10)
+sfe_tissue <- runCorrelogram(sfe_tissue, hvgs[1:5], colGraphName = "visium", 
+                             order = 10, BPPARAM = MulticoreParam(2))
 ```
 
 The results can be plotted with `plotCorrelogram`
 ```{r}
-plotCorrelogram(sfe_tissue, c("nCounts", "nGenes"))
+plotCorrelogram(sfe_tissue, hvgs[1:5])
 ```
 
 The error bars are twice the standard deviation of the Moran's I value. The standard deviation and p-values (null hypothesis is that Moran's I is 0) come from `moran.test` (for Geary's C correlogram, `geary.test`); these should be taken with a grain of salt for data that is not normally distributed. The p-values have been corrected for multiple hypothesis testing across all orders and features. As usual, . means p < 0.1, \* means p < 0.05, \*\* means p < 0.01, and \*\*\* means p < 0.001. 
 
-Geary's C correlogram can be computed by specifying `method = "C"`. 
-```{r}
-sfe_tissue <- colDataCorrelogram(sfe_tissue, c("nCounts", "nGenes"), 
-                                 colGraphName = "visium", method = "C",
-                                 order = 10)
-```
-
-```{r}
-plotCorrelogram(sfe_tissue, c("nCounts", "nGenes"), method = "C")
-```
-
-For attributes of `annotGeometry`:
-```{r}
-sfe_tissue <- annotGeometryCorrelogram(sfe_tissue, 
-                                       features = c("area", "eccentricity"),
-                                       annotGeometryName = "myofiber_simplified",
-                                       annotGraphName = "myofiber_poly2nb",
-                                       zero.policy = TRUE, order = 10)
-```
-
-```{r}
-plotCorrelogram(sfe_tissue, c("area", "eccentricity"),
-                annotGeometryName = "myofiber_simplified")
-```
-
-For myofiber area and convexity, Moran's I goes up in second order neighbors, because in one region in this tissue section, there are many large myofibers and what seem like small myofibers sandwiched between the large ones.
-
-For gene expression
-```{r}
-sfe_tissue <- runCorrelogram(sfe_tissue, hvgs[1:5], colGraphName = "visium", order = 10,
-                             BPPARAM = MulticoreParam(2))
-```
-
-```{r}
-plotCorrelogram(sfe_tissue, hvgs[1:5])
-```
-
-With more genes, the colors become hard to tell apart. In case the correlograms of different genes have different patterns, the correlograms can be clustered and colored with the cluster rather than gene. In the example here, the genes plotted all have similar correlogram patterns, though some seem to decay past the 8th order more quickly than others. Just to demonstrate the clustering:
-```{r}
-set.seed(29)
-corr_clusters <- clusterCorrelograms(sfe_tissue, hvgs[1:5], BLUSPARAM = KmeansParam(2))
-head(corr_clusters)
-```
-
-The `color_by` argument can be used to color the correlograms by anything other than feature or sample. The `color_by` argument can be a column name in `rowData`, or a vector the same length as the `features` argument (as in this example).
-```{r}
-plotCorrelogram(sfe_tissue, features = hvgs[1:5], color_by = corr_clusters$cluster) +
-  labs(color = "cluster")
-```
+Again, this can be done for Geary's C, `colData`, `annotGeometry`, and etc. as in Moran's I and permutation testing. 
 
 ### Moran scatter plot
 In the Moran scatter plot, the x axis is the value itself and the y axis is the average value of the neighbors. The slope of the fitted line is Moran's I. Sometimes clusters appear in this plot, showing different kinds of neighborhoods for this value. Just like Moran's I, permutation testing, and correlogram functions, the functions for Moran scatter plot also follow the `calculate*` and `run*` patterns and have the same user interface. However, the plot can only be made for one feature at a time.
-
-For colData:
-```{r}
-sfe_tissue <- colDataMoranPlot(sfe_tissue, features = "nCounts", 
-                               colGraphName = "visium")
-```
-
-```{r}
-moranPlot(sfe_tissue, "nCounts", colGraphName = "visium")
-```
-
-This plot is a `ggplot2` remake of the function to plot Moran scatter plots in `spdep`, and with contours to indicate point density to address overplotting. "Inflential" comes from [`influence.measures`](https://rdrr.io/r/stats/influence.measures.html) when the line is fitted. The contours can also be shown as filled and only the influential points are plotted individually.
-```{r}
-moranPlot(sfe_tissue, "nCounts", colGraphName = "visium", filled = TRUE)
-```
-
-The influential points can be shown in space
-
-```{r}
-colData(sfe_tissue)$nCounts_moranPlot_inf <- 
-  colFeatureData(sfe_tissue)["nCounts", "MoranPlot_Vis5A"][[1]]$is_inf
-```
-
-```{r}
-plotSpatialFeature(sfe_tissue, "nCounts_moranPlot_inf", 
-                   colGeometryName = "spotPoly")
-```
-
-For `annotGeometry`:
-```{r}
-sfe_tissue <- annotGeometryMoranPlot(sfe_tissue, features = "area",
-                                     annotGeometryName = "myofiber_simplified",
-                                     annotGraphName = "myofiber_poly2nb",
-                                     zero.policy = TRUE)
-```
-
-```{r}
-moranPlot(sfe_tissue, "area", annotGeometryName = "myofiber_simplified", 
-          graphName = "myofiber_poly2nb")
-```
-
-Singletons have no neighbors and are circled in this plot. There appears to be clusters in this plot, of small myofibers next to other small myofibers, larger ones next to larger ones, and small ones next to larger ones. To identify clusters on the Moran plot:
-
-```{r}
-set.seed(29)
-clusts <- clusterMoranPlot(sfe_tissue, "area", 
-                           annotGeometryName = "myofiber_simplified",
-                           BLUSPARAM = KmeansParam(7))
-```
-
-```{r}
-moranPlot(sfe_tissue, "area", graphName = "myofiber_poly2nb", 
-          color_by = clusts$area, annotGeometryName = "myofiber_simplified") +
-  labs(color = "cluster")
-```
-
-Again, the clusters can be plotted in space
-```{r}
-# There's an empty geometry
-ag <- annotGeometry(sfe_tissue, "myofiber_simplified")
-empty_ind <- st_is_empty(ag)
-annotGeometry(sfe_tissue, "myofiber_simplified") <- ag[!empty_ind,]
-annotGeometry(sfe_tissue, "myofiber_simplified")$area_moranPlot_cluster <- clusts$area
-```
-
-```{r}
-data("ditto_colors")
-ggplot(annotGeometry(sfe_tissue, "myofiber_simplified")) +
-  geom_sf(aes(fill = area_moranPlot_cluster), color = NA) +
-  scale_fill_manual(values = ditto_colors)
-```
-
-Clusters in the Moran plot delineate different regions in the tissue. Note that the clusters are paired, because, for example, when a larger myofiber is a neighbor of a smaller myofiber, then that smaller myofiber is also a neighbor of that larger myofiber -- the spatial neighborhood graph is undirected. 
 
 For gene expression, to use one gene to demonstrate:
 ```{r}
@@ -620,6 +437,9 @@ colData(sfe_tissue)$Myh1_moranPlot_clust <- clusts$Myh1
 plotSpatialFeature(sfe_tissue, "Myh1_moranPlot_clust", colGeometryName = "spotPoly")
 ```
 
+Again, this can be done for `colData`, `annotGeometry`, and etc. as in Moran's I and permutation testing. 
+
+# Session info
 ```{r}
 sessionInfo()
 ```

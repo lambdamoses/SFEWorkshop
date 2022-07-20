@@ -9,6 +9,7 @@ Here we demonstrate the [`SpatialFeatureExperiment`](https://github.com/pachterl
 ## Prerequisites
 * Basic knowledge of R syntax and data structures
 * Familiarity with [`SingleCellExperiment`](https://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html) and preferably also `SpatialExperiment` classes
+* Familiarity with 10X Visium
 * Familiarity with `sf` is preferable for in depth data analyses using SFE but optional for this workshop
 
 ## Installation

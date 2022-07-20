@@ -121,7 +121,7 @@ Column, row, and annotation spatial graphs can be get or set with `spatialGraphs
 
 This package wraps functions in the `spdep` package to find spatial neighborhood graphs. In this example, triangulation is used to find the spatial graph; many other methods are also supported, such as k nearest neighbors, distance based neighbors, and polygon contiguity.
 ```{r}
-(g <- findSpatialNeighbors(sfe, MARGIN = 2, method = "tri2nb"))
+(g <- findSpatialNeighbors(sfe, MARGIN = 2, type = "spotPoly", method = "tri2nb"))
 ```
 
 ```{r}
