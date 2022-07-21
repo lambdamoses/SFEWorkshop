@@ -14,6 +14,15 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Introduction
+Tobler's first law of geography:
+
+> Everything is related to everything else. But near things are more related than distant things.
+
+In single cell RNA-seq (scRNA-seq), data and metadata can be represented with `SingleCellExperiment` or `Seurat` objects, and basic exploratory data analyses and visualization performed with `scater`, `scran`, and `scuttle`, or `Seurat`. The `SpatialFeatureExperiment` package and S4 class extending `SpatialExperiment` and `SingleCellExperiment` brings EDA methods for vector spatial data to spatial transcriptomics. `Voyager` to `SpatialFeatureExperiment` is just like `scater`, `scran`, and `scuttle` to `SingleCellExperiment`, implementing basic exploratory spatial data analysis (ESDA) and visualization methods. Non-spatial statistical methods often assume that the samples (cells, spots) are independent, which is not the case in spatial data, where nearby samples tend to be more similar (i.e. positive spatial autocorrelation; negative spatial autocorrelation is when nearby samples tend to be more dissimilar, like a checkered pattern). Much of ESDA is dedicated to spatial autocorrelation, such as finding whether it is present, and if so what's its length scale. 
+
+This part of the workshop gives an overview of some ESDA methods, functionalities of the `Voyager` package, and applications of the `SpatialFeatureExperiment` class with a published Visium dataset.
+
 ```{r setup}
 library(Voyager)
 library(SpatialFeatureExperiment)
@@ -24,16 +33,10 @@ library(sf)
 library(ggplot2)
 library(scales)
 library(patchwork)
-library(sparseMatrixStats)
 library(BiocParallel)
 library(bluster)
 theme_set(theme_bw(10))
 ```
-
-# Introduction
-In single cell RNA-seq (scRNA-seq), data and metadata can be represented with `SingleCellExperiment` or `Seurat` objects, and basic exploratory data analyses and visualization performed with `scater`, `scran`, and `scuttle`, or `Seurat`. The `SpatialFeatureExperiment` package and S4 class extending `SpatialExperiment` and `SingleCellExperiment` brings EDA methods for vector spatial data to spatial transcriptomics. `Voyager` to `SpatialFeatureExperiment` is just like `scater`, `scran`, and `scuttle` to `SingleCellExperiment`, implementing basic exploratory spatial data analysis (ESDA) and visualization methods. Non-spatial statistical methods often assume that the samples (cells, spots) are independent, which is not the case in spatial data, where nearby samples tend to be more similar (i.e. spatial autocorrelation). Much of ESDA is dedicated to spatial autocorrelation, such as finding whether it is present, and if so what's its length scale. 
-
-This vignette gives an overview of these spatial EDA methods, functionalities of the `Voyager` package, and applications of the `SpatialFeatureExperiment` class with a published Visium dataset.
 
 # Dataset
 The dataset used in this vignette comes from [Large-scale integration of single-cell transcriptomic data captures transitional progenitor states in mouse skeletal muscle regeneration](https://doi.org/10.1038/s42003-021-02810-x). Notexin was injected into the tibialis anterior muscle to induce injury, and the healing muscle was collected 2, 5, and 7 days post injury for Visium. The dataset here is from the 2 day timepoint. The dataset is in a `SpatialFeatureExperiment` (SFE) object.
@@ -61,7 +64,7 @@ names(colData(sfe))
 
 Total UMI counts (`nCounts`), number of genes detected per spot (`nGenes`), and proportion of mitochondrially encoded counts (`prop_mito`) have been precomputed and are in `colData(sfe)`. The `plotSpatialFeature` function plots any gene, `colData` values, and geometry attributes in `colGeometry` and `annotGeometry` in space. The Visium spots are plotted as polygons reflecting their actual size relative to the tissue, rather than points as in other packages that plot Visium data. Behind the scene, `geom_sf` is used to plot the geometries.
 
-The tissue boundary was found by thresholding the H&E image and removing small polygons that are most likely debris. The `in_tissue` column of `colData(sfe)` indicates which Visium spot polygon intersects the tissue polygon; this can be found with `SpatialFeatureExperiment::annotPred()` but is beyond the scope of this vignette.
+The tissue boundary was found by thresholding the H&E image and removing small polygons that are most likely debris. The `in_tissue` column of `colData(sfe)` indicates which Visium spot polygon intersects the tissue polygon; this can be found with `SpatialFeatureExperiment::annotPred()`.
 
 While `scran` is used for data normalization here for demonstration purposes and to make the data more normally distributed, we do not mean that it is the best practice in normalizing spatial transcriptomics data, as we don't know what the best practice really should be. As seen in the `nCounts` plot in space above, spatial autocorrelation is evident. In Visium, reverse transcription occurs in situ on the spots, but PCR amplification occurs after the cDNA is dissociated from the spots. Then artifacts introduced from the amplification step would not be spatial. Spatial artifacts may arise from diffusion of transcripts to adjacent spots and tissue permeablization. However, given how the total counts seem to correspond to histological regions, the total counts may have a biological component and hence should not be treated as a technical artifact to be normalized away as in scRNA-seq data normalization methods. 
 ```{r}
@@ -111,7 +114,7 @@ colData(sfe_tissue)$prop_myofiber <-
 ```
 
 ```{r, fig.width=8, fig.height=4, fig.alt="Plot of Visium spots in tissue in physical space, colored by number of myofibers intersecting each spot and proportion of area of each spot occupied by myofibers."}
-plotSpatialFeature(sfe_tissue, features = c("n_myofibers", "prop_myofibers"), 
+plotSpatialFeature(sfe_tissue, features = c("n_myofibers", "prop_myofiber"), 
                    colGeometryName = "spotPoly")
 ```
 
@@ -131,17 +134,7 @@ plotSpatialFeature(sfe_tissue, "mean_myofiber_area", "spotPoly")
 
 Now we can see how the mean area of myofibers intersecting each Visium spot relates to other aspects of the spots such as total counts and gene expression.
 
-The NAs are for spots not intersecting any myofibers, e.g. those in the inflammatory region. There seem to be two clusters: spots with smaller mean myofiber area and larger total counts, and spots with larger mean myofiber area and smaller total counts. Indeed, spots with smaller mean myofiber area tend to have a larger number of myofibers; that the myofibers are smaller is the reason why there are more of them intersecting each spot.
-
-```{r, fig.alt="Scatter plot with nGenes in the y axis and nCounts in the x axis. Each point represents a Visium spot in tissue, colored by mean myofiber area."}
-plotColData(sfe_tissue, x = "nCounts", y = "nGenes", colour_by = "mean_myofiber_area")
-```
-
-```{r, fig.alt="Scatter plot with nGenes in the y axis and nCounts in the x axis. Each point represents a Visium spot in tissue, colored by number of myofibers."}
-plotColData(sfe_tissue, x = "nCounts", y = "nGenes", colour_by = "n_myofibers")
-```
-
-Mean myofiber area and number of myofibers per spot seem to be related to the two branches in the nGenes vs. nCounts plot. The upper branch includes the inflamed injury site with lots of immune cells and hence nuclei and devoid of myofibers and the adjacent region with larger myofibers.
+The NAs are for spots not intersecting any myofibers, e.g. those in the inflammatory region. 
 
 ### Myofiber types
 Marker genes: Myh7 (Type I, slow twitch, aerobic), Myh2 (Type IIa, fast twitch, somewhat aerobic), Myh4 (Type IIb, fast twitch, anareobic), Myh1 (Type IIx, fast twitch, anaerobic), from [this protocol](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5526362/)
@@ -176,8 +169,9 @@ plot_counts_logcounts <- function(sfe, feature) {
 plot_counts_logcounts(sfe_tissue, markers["I"])
 ```
 
-Type IIa myofibers
+Marker gene for type IIa myofibers is shown here. Those interested may change the code to plot markers for tyle IIb and IIx myofibers.
 ```{r}
+
 plot_counts_logcounts(sfe_tissue, markers["IIa"])
 ```
 
@@ -196,28 +190,7 @@ plotColData(sfe_tissue, x = "mean_myofiber_area", y = "prop_mito",
             colour_by = gene_id, by_exprs_values = "logcounts")
 ```
 
-Plotting proportion of mitochondrial counts vs. mean myofiber area, we also see two clusters, one with higher proportion of mitochondrial counts and smaller area, and another with lower proportion of mitochondrial counts and on average slightly larger area. Type IIa myofibers tend to have small area and larger proportion of mitochondrial counts.
-
-```{r}
-plot_counts_logcounts(sfe_tissue, markers["IIb"])
-```
-
-While the raw counts suggest that Type IIb myofibers tend to aggregate at the top region of this section and away from Type IIa myofibers, data normalization made expression of Myh4 seem ubiquitous even in regions without myofibers.
-
-```{r}
-gene_id <- rownames(sfe_tissue)[rowData(sfe_tissue)$symbol == markers["IIb"]]
-plotColData(sfe_tissue, x = "nCounts", y = "prop_mito", 
-            colour_by = gene_id, by_exprs_values = "counts")
-```
-
-In raw counts, spots with high Myh4 expression, indicating Type IIb, also tend to have somewhat high mitochondrial count proportion (still in the upper cluster), but not as high as Type IIa.
-
-```{r}
-plotColData(sfe_tissue, x = "mean_myofiber_area", y = "prop_mito", 
-            colour_by = gene_id, by_exprs_values = "counts")
-```
-
-Type IIb myofibers tend to be larger than type IIa myofibers.
+Plotting proportion of mitochondrial counts vs. mean myofiber area, we also see two clusters, one with higher proportion of mitochondrial counts and smaller area, and another with lower proportion of mitochondrial counts and on average slightly larger area. Type IIa myofibers tend to have smaller area and larger proportion of mitochondrial counts.
 
 # Spatial neighborhood graphs
 A spatial neighborhood graph is required to compute spatial dependency metrics such as Moran's I and Geary's C. The `SpatialFeatureExperiment` package wraps methods in `spdep` to find spatial neighborhood graphs, which are stored within the SFE object (see `spdep` documentation for [`gabrielneigh`](https://r-spatial.github.io/spdep/reference/graphneigh.html), [`knearneigh`](https://r-spatial.github.io/spdep/reference/knearneigh.html), [`poly2nb`](https://r-spatial.github.io/spdep/reference/poly2nb.html), and [`tri2nb`](https://r-spatial.github.io/spdep/reference/tri2nb.html)). The `Voyager` package then uses these graphs for spatial dependency analyses, again based on `spdep` in this first version, but methods from other geospatial packages, some of which also use the spatial neighborhood graphs, may be added later as needed.
@@ -245,10 +218,6 @@ plotAnnotGraph(sfe_tissue, annotGraphName = "myofiber_poly2nb",
 There is no `plotRowGraph` yet since we haven't worked with a dataset where spatial graphs related to genes are relevant, although the SFE object supports row graphs.
 
 # Exploratory _spatial_ data analysis
-Tobler's first law of geography:
-
-> Everything is related to everything else. But near things are more related than distant things.
-
 All spatial autocorrelation metrics in this package can be computed directly on a vector or a matrix rather than an SFE object. The user interface emulates those of dimension reductions in the `scater` package (e.g. `calculateUMAP` that takes in a matrix or SCE object and returns a matrix, and `runUMAP` that takes in an SCE object and adds the results to the `reducedDims` field of the SCE object). So `calculate*` functions take in a matrix or an SFE object and directly return the results (format of the results depends on the structure of the results), while `run*` functions take in an SFE object and add the results to the object.
 
 ## Univariate
@@ -329,6 +298,8 @@ head(colFeatureData(sfe_tissue), 10)
 
 There's only one column for K since it's the same for Moran's I and Geary's C. Here both Moran's I and Geary's C suggest positive spatial autocorrelation for `nCounts` and `nGenes`.
 
+Permutation testing (`runMoranMC`, `runGearyMC`), correlograms (`runCorrelogram`), and Moran scatter plot (`runMoranPlot`) functions all have the same arguments as `runMoransI`, except when additional arguments are required, such as `nsim` for the number of simulation for `runMoranMC` and `runGearyMC` and `order` for the maximum order of neighborhoods for `runCorrelogram`.
+
 ### Permutation testing
 Is the spatial autocorrelation statistically significant? The `moran.test` function in `spdep` can give an analytic p-value but the p-value would not be accurate if the data is not normally distributed. As gene expression data is generally not normally distributed and data normalization doesn't necessarily make the data that close to a normal distribution, permutation testing is used in this package to test the significance of Moran's I and Geary's C, wrapping [`moran.mc` in `spdep`](https://r-spatial.github.io/spdep/reference/moran.mc.html). Just like Moran's I, there's `calculateMoranMC` and `calculateGearyMC` functions to directly return the results, and `colDataMoranMC`, `colGeometryMoranMC`, `annotGeometryMoranMC`, and `runMoranMC` to add the results to the SFE object. MC stands for Monte Carlo. The `nsim` argument specifies the number of simulations. 
 
@@ -348,8 +319,6 @@ plotMoranMC(sfe_tissue, c("nCounts", "nGenes"))
 
 By default, the colorblind friendly palette from `dittoSeq` is used for categorical variables. The density is of Moran's I from the simulations where the values are permuted and disconnected from spatial locations, and the vertical line is the actual Moran's I value. The simulation indicates that the spatial autocorrelation is significant. 
 
-
-
 Each function for Moran MC has a Geary's C equivalent (e.g. `runGearyMC`). 
 ```{r}
 sfe_tissue <- colDataGearyMC(sfe_tissue, features = c("nCounts", "nGenes"), 
@@ -359,36 +328,6 @@ sfe_tissue <- colDataGearyMC(sfe_tissue, features = c("nCounts", "nGenes"),
 ```{r}
 plotMoranMC(sfe_tissue, c("nCounts", "nGenes"), name = "GearyMC")
 ```
-
-Also see some myofiber morphological metrics
-```{r}
-sfe_tissue <- annotGeometryMoranMC(sfe_tissue, 
-                                   features = c("area", "eccentricity"), 
-                                   annotGeometryName = "myofiber_simplified",
-                                   annotGraphName = "myofiber_poly2nb", 
-                                   zero.policy = TRUE, nsim = 100)
-```
-
-Specify `annotGeometryName` to make the `plotMoranMC` function look for results in the `annotGeometry` of interest.
-```{r}
-plotMoranMC(sfe_tissue, 
-            features = c("area", "eccentricity"),
-            annotGeometryName = "myofiber_simplified")
-```
-
-Here all 4 morphological metrics have positive spatial autocorrelation, but myofiber area is more strongly autocorrelated. 
-
-This can also be done to gene expression, again, by default, using the "logcounts" assay.
-```{r}
-sfe_tissue <- runMoranMC(sfe_tissue, hvgs[1:5], colGraphName = "visium", nsim = 100)
-```
-
-Although the row names of `sfe_tissue` are actually Ensembl IDs, the human readable gene symbols are shown in the plots by default.
-```{r}
-plotMoranMC(sfe_tissue, features = hvgs[1:5])
-```
-
-The vertical lines for Car3 and Myh2 overlap but they're not the same value (see results of `runMoransI` above). These genes have positive spatial autocorrelation that is stronger than total counts.
 
 ### Correlogram
 What's the length scale of the spatial autocorrelation? In a correlogram, spatial autocorrelation of higher orders of neighbors (e.g. second order neighbors are neighbors of neighbors) is calculated to see how it decays over the orders. In Visium, with the regular hexagonal grid, order of neighbors is a proxy for distance. For more irregular patterns such as single cells, different methods to find the spatial neighbors may give different results. Functions to compute correlograms wrap [`sp.correlogram` in `spdep`](https://r-spatial.github.io/spdep/reference/sp.correlogram.html), and have the same pattern of `calculate*` and `run*` as the Moran's I and permutation test functions, except for the `order` argument specifying the maximum order of neighbors.
@@ -438,6 +377,12 @@ plotSpatialFeature(sfe_tissue, "Myh1_moranPlot_clust", colGeometryName = "spotPo
 ```
 
 Again, this can be done for `colData`, `annotGeometry`, and etc. as in Moran's I and permutation testing. 
+
+# Limitations
+1. The plotting functions don't plot the H&E image in the background. We may implement that if there is popular request.
+2. It's more convoluted to trick `geom_sf` into flipping the y axis, since the coordinates are in pixels in full resolution image and the image has the origin at the top left.
+3. In the first version of `Voyager`, only univariate global spatial autocorrelation metrics are supported. Anisotropy, univariate local spatial metrics, and multivariate spatial analyses will be added in later versions.
+4. Again, only 2D data is supported at present.
 
 # Session info
 ```{r}

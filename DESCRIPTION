@@ -30,7 +30,6 @@ Suggests:
     scran,
     sf,
     SFEData,
-    sparseMatrixStats,
     SpatialFeatureExperiment,
     SpatialExperiment,
     Voyager,

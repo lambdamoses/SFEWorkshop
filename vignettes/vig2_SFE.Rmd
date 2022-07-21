@@ -16,7 +16,13 @@ knitr::opts_chunk$set(
 
 # Class structure
 ## Introduction
-`SpatialFeatureExperiment` (SFE) is a new [S4](http://adv-r.had.co.nz/S4.html) class built on top of [`SpatialExperiment`](https://bioconductor.org/packages/release/bioc/html/SpatialExperiment.html) (SPE). `SpatialFeatureExperiment` incorporates geometries and geometry operations with the [`sf`](https://cran.r-project.org/web/packages/sf/index.html) package. Examples of supported geometries are Visium spots represented with polygons corresponding to their size, cell or nuclei segmentation polygons, tissue boundary polygons, pathologist annotation of histological regions, and transcript spots of genes. Using `sf`, `SpatialFeatureExperiment` leverages the GEOS C++ libraries underlying `sf` for geometry operations, including algorithms for for determining whether geometries intersect, finding intersection geometries, buffering geometries with margins, etc. A schematic of the SFE object is shown below:
+Simple Features are a standardized way to represent geometries in space. The [`sf`](https://cran.r-project.org/web/packages/sf/index.html) package provides Simple Features access to R, with the `sf` data frame, which can behave like a regular data frame but has a special list column for the geometries.
+
+```{r, fig.cap="Schematic of the sf data frame, illustration by Allison Horst"}
+knitr::include_graphics("https://user-images.githubusercontent.com/520851/50280460-e35c1880-044c-11e9-9ed7-cc46754e49db.jpg")
+```
+
+`SpatialFeatureExperiment` (SFE) is a new [S4](http://adv-r.had.co.nz/S4.html) class built on top of [`SpatialExperiment`](https://bioconductor.org/packages/release/bioc/html/SpatialExperiment.html) (SPE). `SpatialFeatureExperiment` incorporates geometries and geometry operations with the `sf` package. Examples of supported geometries are Visium spots represented with polygons corresponding to their size, cell or nuclei segmentation polygons, tissue boundary polygons, pathologist annotation of histological regions, and transcript spots of genes. Using `sf`, `SpatialFeatureExperiment` leverages the GEOS C++ libraries underlying `sf` for geometry operations, including algorithms for for determining whether geometries intersect, finding intersection geometries, buffering geometries with margins, etc. A schematic of the SFE object is shown below:
 
 ```{r, echo=FALSE, out.width = "100%", fig.cap="Schematics of the SFE object", fig.alt="SpatialFeatureExperiment expands on SpatialExperiment by adding column, row, and annotation geometries and spatial graphs. This is explained in detail in the following paragraphs."}
 knitr::include_graphics("sfe_schematics.png")
@@ -45,18 +51,16 @@ library(Matrix)
 ```
 
 ## Geometries
-User interfaces to get or set the geometries and spatial graphs emulate those of `reducedDims` and `row/colPairs` in `SingleCellExperiment`. Column and row geometries also emulate `reducedDims` in internal implementation, while annotation geometries and spatial graphs differ. 
+User interfaces to get or set the geometries and spatial graphs emulate those of [`reducedDims` in `SingleCellExperiment`](https://rdrr.io/bioc/SingleCellExperiment/man/reducedDims.html).
 
-### Column and row
-Column and row geometries can be get or set with the `dimGeometries` (multiple items, covered in [the `SpatialFeatureExperiment` vignette](https://pachterlab.github.io/SpatialFeatureExperiment/dev/articles/SFE.html)) or `dimGeometry` (one item, covered here) function. The `MARGIN` argument is as in the `apply` function: `MARGIN = 1` means row, and `MARGIN = 2` means column. Or equivalently, use `colGeometry/ies` and `rowGeometry/ies` in place of specifying the `MARGIN`.
-
-`dimGeometry` gets or sets one particular geometry by name of index.
+Geometries associated with columns of the gene count matrix (cells or Visium spots) can be get/set with `colGeometry`. Similarly, geometries associated with rows of the gene count matrix (genes or features) can be get/set with `rowGeometry`, and geometries associated with the annotations can be get/set with `annotGeometry`. Here we demonstrate `colGeometry` as the arguments for `rowGeometry` and `annotGeometry` are the same. See the [vignette of `SpatialFeatureExperiment`](https://pachterlab.github.io/SpatialFeatureExperiment/dev/articles/SFE.html) for more details.
 ```{r}
 # Get Visium spot polygons
-(spots <- colGeometry(sfe, "spotPoly"))
+(spots <- colGeometry(sfe, type = "spotPoly"))
 ```
 
 ```{r}
+# Use st_geometry so it won't color by the attributes
 plot(st_geometry(spots))
 ```
 
@@ -65,12 +69,12 @@ plot(st_geometry(spots))
 colGeometry(sfe, "foobar") <- spots
 ```
 
-`dimGeometryNames` gets or sets the names of the geometries
+`colGeometryNames` gets or sets the names of the geometries
 ```{r}
 (cg_names <- colGeometryNames(sfe))
 ```
 
-There are shorthands for some specific column or row geometries. For example, `spotPoly(sfe)` is equivalent to `colGeometry(sfe, "spotPoly")` for Visium spot polygons, and `txSpots(sfe)` is equivalent to `rowGeometry(sfe, "txSpots")` for transcript spots in single molecule technologies. 
+There are shorthands for some specific geometries. For example, `spotPoly(sfe)` is equivalent to `colGeometry(sfe, "spotPoly")` for Visium spot polygons, and `txSpots(sfe)` is equivalent to `rowGeometry(sfe, "txSpots")` for transcript spots in single molecule technologies.
 
 ```{r}
 # Getter
@@ -82,33 +86,14 @@ There are shorthands for some specific column or row geometries. For example, `s
 spotPoly(sfe) <- spots
 ```
 
-### Annotation
-Annotation geometries can be get or set with `annotGeometries` or `annotGeometry`. In column or row geometries, the number of rows of the `sf` data frame (i.e. the number of geometries in the data frame) is constrained by the number of rows or columns of the gene count matrix respectively, because just like `rowData` and `colData`, each row of a `rowGeometry` or `colGeometry` `sf` data frame must correspond to a row or column of the gene count matrix respectively. In contrast, an `annotGeometry` `sf` data frame can have any dimension, not constrained by the dimension of the gene count matrix. Similar to column and row geometries, annotation geometries have `annotGeometry`, `annotGeometries`, and `annotGeometryNames` getters and setters. `annotGeometries` is covered in [the `SpatialFeatureExperiment` vignette](https://pachterlab.github.io/SpatialFeatureExperiment/dev/articles/SFE.html).
-
+`tissueBoundary(sfe)` is equivalent to `annotGeometry(sfe, "tissueBoundary")`.
 ```{r}
-# Getter, by name or index
-(tb <- annotGeometry(sfe, "tissueBoundary"))
+# Getter
+(tb <- tissueBoundary(sfe))
 ```
 
 ```{r}
 plot(st_geometry(tb))
-```
-
-```{r}
-# Setter, by name or index
-annotGeometry(sfe, "tissueBoundary") <- tb
-```
-
-```{r}
-# Get names of annotation geometries
-(ag_names <- annotGeometryNames(sfe))
-```
-
-There are shorthands for specific annotation geometries. For example, `tissueBoundary(sfe)` is equivalent to `annotGeometry(sfe, "tissueBoundary")`. `cellSeg()` (cell segmentation) and `nucSeg()` (nuclei segmentation) would first query `colGeometries` (for single cell, single molecule technologies, equivalent to `colGeometry(sfe, "cellSeg")` or `colGeometry(sfe, "nucSeg")`), and if not found, they will query `annotGeometries` (for array capture and microdissection technologies, equivalent to `annotGeometry(sfe, "cellSeg")` or `annotGeometry(sfe, "nucSeg")`). 
-
-```{r}
-# Getter
-(tb <- tissueBoundary(sfe))
 ```
 
 ```{r}
@@ -117,40 +102,39 @@ tissueBoundary(sfe) <- tb
 ```
 
 ## Spatial graphs
-Column, row, and annotation spatial graphs can be get or set with `spatialGraphs` and `spatialGraph` functions. Similar to `dimGeometr*` functions, `spatialGraph*` functions have a `MARGIN` argument. However, since internally, row and column geometries are implemented very differently from annotation geometries, while row, column, and annotation graphs are implemented the same way, for the `spatialGraph*` functions, `MARGIN = 1` means rows, `MARGIN = 2` means columns, and `MARGIN = 3` means annotation. Similar to `dimGeometry*` functions, there are `rowGraph*`, `colGraph*`, and `annotGraph*` getter and setter functions for each margin. 
-
-This package wraps functions in the `spdep` package to find spatial neighborhood graphs. In this example, triangulation is used to find the spatial graph; many other methods are also supported, such as k nearest neighbors, distance based neighbors, and polygon contiguity.
+Spatial dependence analyses in the `spdep` package requires a spatial neighborhood graph. The `SpatialFeatureExperiment` package wraps functions in the `spdep` package to find spatial neighborhood graphs. In this example, triangulation is used to find the spatial graph; many other methods are also supported, such as k nearest neighbors, distance based neighbors, and polygon contiguity.
 ```{r}
 (g <- findSpatialNeighbors(sfe, MARGIN = 2, type = "spotPoly", method = "tri2nb"))
 ```
 
+This is what the triangulated graph looks like
 ```{r}
 plot(g, coords = spatialCoords(sfe))
 ```
 
+Similar to `colGeometry`, `rowGeometry`, and `annotGeometry`, the spatial graphs can be get and set with `colGraph`, `rowGraph`, and `annotGraph`; the arguments of the graph getters and setters are the same as those of the geometry getters and setters, so we only demonstrate `colGraph` here.
+
 ```{r}
 # Set graph by name
-colGraph(sfe, "graph1") <- g
+colGraph(sfe, type = "graph1") <- g
 ```
 
 ```{r}
 # Get graph by name
-g <- spatialGraph(sfe, "graph1", MARGIN = 2L)
-# Or equivalently
-g <- colGraph(sfe, "graph1")
-g
+(g <- colGraph(sfe, "graph1"))
 ```
 
-For Visium, spatial neighborhood graph of the hexagonal grid can be found with the known locations of the barcodes.
+For Visium, spatial neighborhood graph of the hexagonal grid can be found with the known locations of the barcodes. 
 ```{r}
 colGraph(sfe, "visium") <- findVisiumGraph(sfe)
 ```
 
+This is what the Visium graph looks like
 ```{r}
 plot(colGraph(sfe, "visium"), coords = spatialCoords(sfe))
 ```
 
-Similar to `dimGeometries`, the graphs have `spatialGraphNames` getter and setter and the margin specific wrappers. 
+Similar to the geometries, the graphs have getters and setters for the names:
 ```{r}
 colGraphNames(sfe)
 ```
@@ -158,7 +142,7 @@ colGraphNames(sfe)
 ## Multiple samples
 Thus far, the example dataset used only has one sample. The `SpatialExperiment` (SPE) object has a special column in `colData` called `sample_id`, so data from multiple tissue sections can coexist in the same SPE object for joint dimension reduction and clustering while keeping the spatial coordinates separate. It's important to keep spatial coordinates of different tissue sections separate because first, the coordinates would only make sense within the same section, and second, the coordinates from different sections can have overlapping numeric values. 
 
-SFE inherits from SPE, and with geometries and spatial graphs, `sample_id` is even more important. The geometry and graph getter and setter functions have a `sample_id` argument, which is optional when only one sample is present in the SFE object. This argument is mandatory if multiple samples are present, and can be a character vector for multiple samples or "all" for all samples. Below are examples of using the getters and setters for multiple samples.
+SFE inherits from SPE, and with geometries and spatial graphs, `sample_id` is even more important. The geometry and graph getter and setter functions shown above have a `sample_id` argument, which is optional when only one sample is present in the SFE object. This argument is mandatory if multiple samples are present, and can be a character vector for multiple samples or "all" for all samples. Below are examples of using the getters and setters for multiple samples.
 
 ```{r}
 # Construct toy dataset with 2 samples
@@ -178,49 +162,15 @@ sampleIDs(sfe_combined)
 (spots2 <- colGeometry(sfe_combined, "spotPoly", sample_id = "sample02"))
 ```
 
-```{r}
-# Only set the geometries for the second sample
-# Leaving geometries of the first sample intact
-colGeometry(sfe_combined, "spotPoly", sample_id = "sample02") <- spots2
-```
-
-```{r}
-# Set graph only for the second sample
-colGraph(sfe_combined, "foo", sample_id = "sample02") <- 
-  findSpatialNeighbors(sfe_combined, sample_id = "sample02")
-```
-
-```{r}
-# Get graph only for the second sample
-colGraph(sfe_combined, "foo", sample_id = "sample02")
-```
-
-```{r}
-# Set graph of the same name for both samples
-# The graphs are computed separately for each sample
-colGraphs(sfe_combined, sample_id = "all", name = "visium") <- 
-  findVisiumGraph(sfe_combined, sample_id = "all")
-```
-
-```{r}
-# Get multiple graphs of the same name
-colGraphs(sfe_combined, sample_id = "all", name = "visium")
-```
-
-```{r}
-# Or just all graphs of the margin
-colGraphs(sfe_combined, sample_id = "all")
-```
-
 Sample IDs can also be changed, with the `changeSampleIDs` function, with a named vector whose names are the old names and values are the new names.
 ```{r}
 sfe_combined <- changeSampleIDs(sfe, replacement = c(Vis5A = "foo", sample02 = "bar"))
-sfe_combined
+sampleIDs(sfe_combined)
 ```
 
 # Object construction
 ## From scratch
-An SFE object can be constructed from scratch with the assay matrices and metadata. In this toy example, `dgCMatrix` is used, but since SFE inherits from SingleCellExperiment (SCE), other types of arrays supported by SCE such as delayed arrays should also work.
+An SFE object can be constructed from scratch with the assay matrices, column metadata, and spatial coordinates. In this toy example, `dgCMatrix` is used, but since SFE inherits from SingleCellExperiment (SCE), other types of arrays supported by SCE such as delayed arrays should also work.
 ```{r}
 # Visium barcode location from Space Ranger
 data("visium_row_col")
@@ -265,9 +215,14 @@ dir <- system.file(
   
 sample_ids <- c("section1", "section2")
 samples <- file.path(dir, sample_ids, "outs")
-  
+
+# The "outs" directory in Space Ranger output
 list.files(samples[1])
+
+# The contents of the "spatial" directory
 list.files(file.path(samples[1], "spatial"))
+
+# Where the raw gene count matrix is located
 file.path(samples[1], "raw_feature_bc_matrix")
 ```
 
@@ -300,7 +255,7 @@ SFE objects can be concatenated with `cbind`, as was done just now to create a t
 sfe_combined <- cbind(sfe1, sfe2)
 ```
 
-The SFE object can also be subsetted like a matrix, like an SCE object. More complexity arises when it comes to the spatial graphs. The `drop` argument of the SFE method `[` determines what to do with the spatial graphs. If `drop = TRUE`, then all spatial graphs will be removed, since the graphs with nodes and edges that have been removed are no longer valid. If `drop = FALSE`, which is the default, then the spatial graphs will be reconstructed with the remaining nodes after subsetting. Reconstruction would only work when the original graphs were constructed with `findSpatialNeighbors` or `findVisiumGraph` in this package, which records the method and parameters used to construct the graphs. If reconstruction fails, then a waning will be issued and the graphs removed.
+The SFE object can also be subsetted like a matrix, like an SCE object. More complexity arises when it comes to the spatial graphs. The `drop` argument of the SFE method `[` determines what to do with the spatial graphs. If `drop = TRUE`, then all spatial graphs will be removed, since the graphs with nodes and edges that have been removed are no longer valid. If `drop = FALSE`, which is the default, then the spatial graphs will be reconstructed with the remaining nodes after subsetting. Reconstruction would only work when the original graphs were constructed with `findSpatialNeighbors` or `findVisiumGraph` in this package, which records the method and parameters used to construct the graphs. If reconstruction fails, then a warning will be issued and the graphs removed.
 ```{r}
 (sfe_subset <- sfe[1:10, 1:10, drop = TRUE])
 ```
@@ -345,7 +300,7 @@ The cropping is done independently for each `sample_id`, and only on `sample_id`
 Geometry predicates and operations can also be performed to return the results without subsetting an SFE object. For example, one may want a logical vector indicating whether each Visium spot intersects the tissue, or a numeric vector of how many nuclei there are in each Visium spot. Or get the intersections between each Visium spot and nuclei. Again, the geometry predicates and operations are performed independently for each sample, and the `sample_id` argument is optional when there is only one sample.
 
 ```{r}
-# Get logical vector
+# Get logical vector of whether each Visium spot intersects tissue
 colData(sfe)$in_tissue <- annotPred(sfe, colGeometryName = "spotPoly", 
                                     annotGeometryName = "tissueBoundary",
                                     sample_id = "Vis5A")
@@ -370,6 +325,11 @@ bbox(sfe_moved, sample_id = "Vis5A")
 ```
 
 The original bounding box before moving is stored within the SFE object, which can be read by `dimGeometry` setters so newly added geometries can have coordinates moved as well; this behavior can be turned off with the optional argument `translate = FALSE` in `dimGeometry` setters.
+
+# Limitations
+1. Only 2D data is supported for now.
+2. Geometric operation do not change the SPE `ImgData`.
+3. Does not support raster data or `spatstat` spatial point process analyses.
 
 # Session info
 ```{r}

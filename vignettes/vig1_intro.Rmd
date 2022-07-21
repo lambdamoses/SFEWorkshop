@@ -30,7 +30,7 @@ library(sf)
 # An analogy from geographical space
 Data from bulk RNA-seq, single cell RNA-seq (scRNA-seq), and spatial transcriptomics all come from originally spatially organized tissues (except for blood), where such spatial organization plays a role in the properties and functions of the tissues. For this reason, a geographical analogy may be more adequate than the traditional analogy of the smoothie vs. fruit salad vs. tart. 
 
-Many of you attending this conference in person have traveled to Seattle, and might explore Seattle after the talks or the entire conference. Bulk RNA-seq is like average values over the entire Washington state. It gives some information, such as that Washington tends to be cooler and more humid than California, and that median household income in California and Washington are higher than that in Nevada and Oregon. However, a tourist would like a higher resolution.
+Many of you attending this conference in person have traveled to Seattle, and might explore Seattle after the talks or the entire conference. Bulk RNA-seq is like average values over the entire Washington state. It gives some information, such as that on average, Washington tends to have fewer sunny days per year than California. However, each state has diverse climate and weather, and the tourist prepares for weather in individual cities rather than the state average.
 
 ```{r}
 data("statedata")
@@ -42,21 +42,23 @@ states_sf <- st_transform(states_sf, crs = 4326)
 ```
 
 ```{r}
-states_sf <- merge(states_sf, statedata, by = c("state_name", "state_fips"))
 states_sub <- states_sf[states_sf$state_name %in% c("California", "Oregon", "Washington", "Nevada"),]
 bboxes <- lapply(states_sub$geometry, st_bbox)
+# From bestplaces.net
+states_sub$sunny_days <- c(252, 258, 175, 165)
 for (i in seq_along(bboxes)) {
   states_sub$geometry[i] <- states_sub$geometry[i] - bboxes[[i]][c("xmin", "ymin")]
 }
 ```
 
-```{r, fig.width=8, fig.height=2}
-ggplot(states_sub, aes(fill = medhhincome)) + geom_sf() +
-  theme_void(14) +
-  facet_wrap(~ state_name, nrow = 1)
+```{r, fig.width=8, fig.height=3}
+ggplot(states_sub, aes(fill = sunny_days)) + geom_sf() +
+  theme_void(18) +
+  facet_wrap(~ state_name, nrow = 1) +
+  labs(title = "Average number of sunny days per year")
 ```
 
-Non-spatial scRNA-seq is like tourist attractions in Seattle separated from their neighborhoods. There's the Space Needle, the Museum of Pop Culture, Chihuli glass museum, Smith Tower, Pike Place, Museum of Flight, and etc. These tourist attractions can also be classified based on their characteristics, such as architectural style, function, and era of construction. Dimension reduction can be performed on these numerous characteristics. This would be of more interest to an avid tourist who really wants to get to know Seattle than the state level averages. 
+Non-spatial scRNA-seq is like a list of tourist attractions in Seattle without spatial locations, where each tourist attraction is analogous to a cell. There's the Space Needle, the Museum of Pop Culture, Chihuly Garden and Glass, Smith Tower, Pike Place, Museum of Flight, and etc. These tourist attractions can also be classified based on their characteristics, such as architectural style, function, and era of construction, analogous to gene expression. Dimension reduction can be performed on these numerous characteristics. Compared to the state averages, this would be of more interest to a tourist. 
 
 ```{r, fig.align='center'}
 knitr::include_graphics("seattle_attractions.png")
@@ -69,7 +71,7 @@ knitr::include_graphics("seattle_map.png")
 ```
 
 # Introduction to spatial transcriptomics data
-Back to spatial transcriptomics. A working definition of "spatial transcriptomics" is any attempt to quantify the transcripts of more genes than can be done in one round of fluorescent *in situ* hybridization (FISH) while preserving the spatial context of the gene expression in the tissue. Since 2018, interest in spatial transcriptomics -- in both data collection and data analysis -- has grown drastically. 
+Spatial transcriptomics helps us to make maps of the tissue, so just like in the geographical map, we may locate characteristics of cells in space and find spatial neighborhoods of cells. A working definition of "spatial transcriptomics" is any attempt to quantify the transcripts of more genes than can be done in one round of fluorescent *in situ* hybridization (FISH) while preserving the spatial context of the gene expression in the tissue. Since 2018, interest in spatial transcriptomics -- in both data collection and data analysis -- has grown drastically. 
 ```{r, fig.cap="Number of publication over time for current era data collection and data analysis. Bin width is 120 days. The x-shaped points show the number of publications from the last bin, which is not yet full."}
 knitr::include_graphics("analysis-current-1.png", dpi = 200)
 ```
@@ -99,7 +101,7 @@ In the literature when spatial transcriptomics data is generated, the data is of
 3. Explore how gene expression and quality control (QC) metrics vary in space, such as strength, length scale, and direction (anisotropy) of spatial autocorrelation. This workshop explores strength and length scale of spatial autocorrelation; anisotropy will be supported in a later version of the `Voyager` package.
 
 # Geospatial data types and how they may relate to spatial transcriptomics
-Geospatial data broadly fall into two types by representation: vector and raster. Vector data represents the world as points, lines, and polygons, specified by coordinates. For example, polygons would be specified by coordinates of the vertices. Raster data are basically images, where each pixel has a value, though unlike the typical RGB image, raster data can have many different layers analogous to the 3 channels in RGB images. Raster is common in remote sensing.
+Opportunities presented by spatial data can be explored by leveraging a vast tradition of tools made for geospatial data. Geospatial data broadly fall into two types by representation: vector and raster. Vector data represents the world as points, lines, and polygons, specified by coordinates. For example, polygons would be specified by coordinates of the vertices. Raster data are basically images, where each pixel has a value, though unlike the typical RGB image, raster data can have many different layers analogous to the 3 channels in RGB images. Raster is common in remote sensing.
 ```{r}
 knitr::include_graphics("spatial_types.png")
 ```
@@ -109,7 +111,7 @@ Vector data can be further classified by the processes generating the data:
 1. Areal, where values are for entire areas (e.g. cities, zip codes) rather than individuals. This is common in epidemiology to protect patients' privacy. 
 2. Geostatistical, where a spatial process (e.g. Gaussian process) is sampled at points in space, and the locations of those points are known and not of interest by themselves. Rather, the values are of interest. An example is measurements of pollutant concentration at points in space.
 3. Point process, where the locations of occurrence is of interest, such as where individuals of a species of plants occur. The locations themselves are analyzed to find if they are randomly distributed, clustered, or repelling each other, and if they are affected by covariates.
-4. When a phenomenon can only occur on a spatial network, such as roads and rivers. This can be a point process, such as locations of traffic incidents. This can also be analogous to raster data, such as Strava's road/trail popularity heatmap, or areal when Strava's heatmap is summarized over segments. 
+4. When a phenomenon can only occur on a spatial network, such as roads and rivers. This can be a point process, such as locations of traffic incidents. This can also be analogous to raster data, such as [Strava's road/trail popularity heatmap](https://www.strava.com/heatmap), or areal when Strava's heatmap is summarized over segments. 
 
 For each of these data types, there are already well-established tools for data analysis. For example, `sf` represents vector data and makes it behave like a data frame in R, `spdep` can be used for spatial dependency of areal data, `INLA` can be used for Bayesian spatial modeling, `gstat` is used for interpolation with geostatistical data (kriging), `spatstat` is used for point process data, `sfnetworks` for network data, and `spatstat` supports point process analysis within a network. 
 
@@ -124,11 +126,12 @@ If we can relate these data types to spatial transcriptomics, then we can take a
 Some geospatial data analysis methods have already been used in spatial transcriptomics, such as Gaussian process regression (which kriging is based on), Potts model, spatial point process analyses, conditional autoregressive models, and global and local variants of Moran's I. (get the references) However, these sptial transcriptomics packages and data analysis in the literature don't fully explore the opportunities given by the spatial information mentioned above, nor do they always take advantage of the existing software infrastructure originally built for geospatial data.
 
 This workshop presents the packages `SpatialFeatureExperiment` and `Voyager`, which bring more of the existing vector geospatial data analysis tools to spatial transcriptomics. `SpatialFeatureExperiment` (SFE) implements a new S4 class extending `SpatialExperiment` with `sf` data frames representing cell or Visium spot polygons, geometries of other objects, anatomical regions, and tissue boundaries, and spatial neighborhood graphs. `Voyager` to SFE is just like `scater`, `scran`, and `scuttle` to `SingleCellExperiment`, implementing basic ESDA using well-established geospatial tools and plotting functions for geometries and ESDA results. 
-We focus on vector data here. Although the fluorsecent or H&E images are raster, features extracted from the images, such as cell and nuclei segmentation, and transcript spots, are more commonly used for downstream analyses. 
+With `sf`, we focus on vector areal data here, because of the popularity of Visium, and that although the fluorsecent or H&E images are raster, vector features extracted from the images, such as cell and nuclei segmentation, and transcript spots, are more commonly used for downstream analyses. 
 
 # Limitations and future directions
 
-No analogy is perfect, and these are some limitations of the geospatial analogy:
+No analogy is perfect, and these are some limitations of the geospatial analogy that would call for data analysis methods specific to spatial transcriptomics:
 
 1. Biological tissues are usually originally 3D. Although most spatial transcriptomics datasets come from thin sections, some datasets come from thicker sections. However, the z dimension usually has much lower resolution than x and y if present, and might need to be treated differently. Geospatial tools and resources are very focused on 2D. If 3D support is present (e.g. 3D spatial point processes in `spatstat`), the support may be limited.
 2. Spatial transcriptomics datasets can get much larger than most geospatial vector datasets, from thousands of genes and thousands to millions of cells or spots. There should be more emphasis on multivariate spatial analyses, which we plan to add to a later version of `Voyager`. On disk tools exist for geospatial data, but are not supported by SFE yet. 
+3. Unlike cities and natural landscapes, development and structure of some tissues (e.g. the cerebral cortex) are tightly regulated and similar across individuals.
