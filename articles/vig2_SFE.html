@@ -97,18 +97,29 @@
 <div class="section level3">
 <h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h3>
+<p>Simple Features are a standardized way to represent geometries in
+space. The <a href="https://cran.r-project.org/web/packages/sf/index.html" class="external-link"><code>sf</code></a>
+package provides Simple Features access to R, with the <code>sf</code>
+data frame, which can behave like a regular data frame but has a special
+list column for the geometries.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"https://user-images.githubusercontent.com/520851/50280460-e35c1880-044c-11e9-9ed7-cc46754e49db.jpg"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="https://user-images.githubusercontent.com/520851/50280460-e35c1880-044c-11e9-9ed7-cc46754e49db.jpg" alt=""><p class="caption">Schematic of the sf data frame, illustration by
+Allison Horst</p>
+</div>
 <p><code>SpatialFeatureExperiment</code> (SFE) is a new <a href="http://adv-r.had.co.nz/S4.html" class="external-link">S4</a> class built on top of <a href="https://bioconductor.org/packages/release/bioc/html/SpatialExperiment.html" class="external-link"><code>SpatialExperiment</code></a>
 (SPE). <code>SpatialFeatureExperiment</code> incorporates geometries and
-geometry operations with the <a href="https://cran.r-project.org/web/packages/sf/index.html" class="external-link"><code>sf</code></a>
-package. Examples of supported geometries are Visium spots represented
-with polygons corresponding to their size, cell or nuclei segmentation
-polygons, tissue boundary polygons, pathologist annotation of
-histological regions, and transcript spots of genes. Using
-<code>sf</code>, <code>SpatialFeatureExperiment</code> leverages the
-GEOS C++ libraries underlying <code>sf</code> for geometry operations,
-including algorithms for for determining whether geometries intersect,
-finding intersection geometries, buffering geometries with margins, etc.
-A schematic of the SFE object is shown below:</p>
+geometry operations with the <code>sf</code> package. Examples of
+supported geometries are Visium spots represented with polygons
+corresponding to their size, cell or nuclei segmentation polygons,
+tissue boundary polygons, pathologist annotation of histological
+regions, and transcript spots of genes. Using <code>sf</code>,
+<code>SpatialFeatureExperiment</code> leverages the GEOS C++ libraries
+underlying <code>sf</code> for geometry operations, including algorithms
+for for determining whether geometries intersect, finding intersection
+geometries, buffering geometries with margins, etc. A schematic of the
+SFE object is shown below:</p>
 <div class="figure">
 <img src="sfe_schematics.png" alt="SpatialFeatureExperiment expands on SpatialExperiment by adding column, row, and annotation geometries and spatial graphs. This is explained in detail in the following paragraphs." width="100%"><p class="caption">
 Schematics of the SFE object
@@ -174,7 +185,7 @@ these attributes and results of analyses of these attributes
 (e.g. spatial regions defined by the attributes) may be related back to
 gene expression.</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/dev/" class="external-link">SpatialFeatureExperiment</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/drighelli/SpatialExperiment" class="external-link">SpatialExperiment</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: SingleCellExperiment</span></span>
@@ -247,7 +258,7 @@ gene expression.</li>
 <span><span class="co">#&gt; The following object is masked from 'package:S4Vectors':</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     expand</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example dataset</span></span>
 <span><span class="op">(</span><span class="va">sfe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SFEData/man/McKellarMuscleData.html" class="external-link">McKellarMuscleData</a></span><span class="op">(</span>dataset <span class="op">=</span> <span class="st">"small"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; snapshotDate(): 2022-07-15</span></span>
@@ -280,27 +291,20 @@ gene expression.</li>
 <h3 id="geometries">Geometries<a class="anchor" aria-label="anchor" href="#geometries"></a>
 </h3>
 <p>User interfaces to get or set the geometries and spatial graphs
-emulate those of <code>reducedDims</code> and <code>row/colPairs</code>
-in <code>SingleCellExperiment</code>. Column and row geometries also
-emulate <code>reducedDims</code> in internal implementation, while
-annotation geometries and spatial graphs differ.</p>
-<div class="section level4">
-<h4 id="column-and-row">Column and row<a class="anchor" aria-label="anchor" href="#column-and-row"></a>
-</h4>
-<p>Column and row geometries can be get or set with the
-<code>dimGeometries</code> (multiple items, covered in <a href="https://pachterlab.github.io/SpatialFeatureExperiment/dev/articles/SFE.html" class="external-link">the
-<code>SpatialFeatureExperiment</code> vignette</a>) or
-<code>dimGeometry</code> (one item, covered here) function. The
-<code>MARGIN</code> argument is as in the <code>apply</code> function:
-<code>MARGIN = 1</code> means row, and <code>MARGIN = 2</code> means
-column. Or equivalently, use <code>colGeometry/ies</code> and
-<code>rowGeometry/ies</code> in place of specifying the
-<code>MARGIN</code>.</p>
-<p><code>dimGeometry</code> gets or sets one particular geometry by name
-of index.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+emulate those of <a href="https://rdrr.io/bioc/SingleCellExperiment/man/reducedDims.html" class="external-link"><code>reducedDims</code>
+in <code>SingleCellExperiment</code></a>.</p>
+<p>Geometries associated with columns of the gene count matrix (cells or
+Visium spots) can be get/set with <code>colGeometry</code>. Similarly,
+geometries associated with rows of the gene count matrix (genes or
+features) can be get/set with <code>rowGeometry</code>, and geometries
+associated with the annotations can be get/set with
+<code>annotGeometry</code>. Here we demonstrate <code>colGeometry</code>
+as the arguments for <code>rowGeometry</code> and
+<code>annotGeometry</code> are the same. See the <a href="https://pachterlab.github.io/SpatialFeatureExperiment/dev/articles/SFE.html" class="external-link">vignette
+of <code>SpatialFeatureExperiment</code></a> for more details.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get Visium spot polygons</span></span>
-<span><span class="op">(</span><span class="va">spots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">colGeometry</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"spotPoly"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">(</span><span class="va">spots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">colGeometry</a></span><span class="op">(</span><span class="va">sfe</span>, type <span class="op">=</span> <span class="st">"spotPoly"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Simple feature collection with 77 features and 1 field</span></span>
 <span><span class="co">#&gt; Geometry type: POLYGON</span></span>
 <span><span class="co">#&gt; Dimension:     XY</span></span>
@@ -318,24 +322,25 @@ of index.</p>
 <span><span class="co">#&gt; AATTCATAAGGGATCT POLYGON ((6889.769 14598.22...     Vis5A</span></span>
 <span><span class="co">#&gt; ACGAGTACGGATGCCC POLYGON ((5084.397 13395.63...     Vis5A</span></span>
 <span><span class="co">#&gt; ACGCTAGTGATACACT POLYGON ((5639.096 13394.44...     Vis5A</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">spots</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Use st_geometry so it won't color by the attributes</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">spots</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Setter</span></span>
 <span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">colGeometry</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"foobar"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">spots</span></span></code></pre></div>
-<p><code>dimGeometryNames</code> gets or sets the names of the
+<p><code>colGeometryNames</code> gets or sets the names of the
 geometries</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">cg_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">colGeometryNames</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "spotPoly" "foobar"</span></span></code></pre></div>
-<p>There are shorthands for some specific column or row geometries. For
-example, <code>spotPoly(sfe)</code> is equivalent to
+<p>There are shorthands for some specific geometries. For example,
+<code>spotPoly(sfe)</code> is equivalent to
 <code>colGeometry(sfe, "spotPoly")</code> for Visium spot polygons, and
 <code>txSpots(sfe)</code> is equivalent to
 <code>rowGeometry(sfe, "txSpots")</code> for transcript spots in single
 molecule technologies.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Getter</span></span>
 <span><span class="op">(</span><span class="va">spots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">spotPoly</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Simple feature collection with 77 features and 1 field</span></span>
@@ -355,62 +360,12 @@ molecule technologies.</p>
 <span><span class="co">#&gt; AATTCATAAGGGATCT POLYGON ((6889.769 14598.22...     Vis5A</span></span>
 <span><span class="co">#&gt; ACGAGTACGGATGCCC POLYGON ((5084.397 13395.63...     Vis5A</span></span>
 <span><span class="co">#&gt; ACGCTAGTGATACACT POLYGON ((5639.096 13394.44...     Vis5A</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Setter</span></span>
 <span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">spotPoly</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">spots</span></span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="annotation">Annotation<a class="anchor" aria-label="anchor" href="#annotation"></a>
-</h4>
-<p>Annotation geometries can be get or set with
-<code>annotGeometries</code> or <code>annotGeometry</code>. In column or
-row geometries, the number of rows of the <code>sf</code> data frame
-(i.e. the number of geometries in the data frame) is constrained by the
-number of rows or columns of the gene count matrix respectively, because
-just like <code>rowData</code> and <code>colData</code>, each row of a
-<code>rowGeometry</code> or <code>colGeometry</code> <code>sf</code>
-data frame must correspond to a row or column of the gene count matrix
-respectively. In contrast, an <code>annotGeometry</code> <code>sf</code>
-data frame can have any dimension, not constrained by the dimension of
-the gene count matrix. Similar to column and row geometries, annotation
-geometries have <code>annotGeometry</code>,
-<code>annotGeometries</code>, and <code>annotGeometryNames</code>
-getters and setters. <code>annotGeometries</code> is covered in <a href="https://pachterlab.github.io/SpatialFeatureExperiment/dev/articles/SFE.html" class="external-link">the
-<code>SpatialFeatureExperiment</code> vignette</a>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Getter, by name or index</span></span>
-<span><span class="op">(</span><span class="va">tb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">annotGeometry</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"tissueBoundary"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Simple feature collection with 1 feature and 2 fields</span></span>
-<span><span class="co">#&gt; Geometry type: POLYGON</span></span>
-<span><span class="co">#&gt; Dimension:     XY</span></span>
-<span><span class="co">#&gt; Bounding box:  xmin: 5094 ymin: 13000 xmax: 7000 ymax: 14969</span></span>
-<span><span class="co">#&gt; CRS:           NA</span></span>
-<span><span class="co">#&gt;   ID                       geometry sample_id</span></span>
-<span><span class="co">#&gt; 7  7 POLYGON ((5094 13000, 5095 ...     Vis5A</span></span></code></pre></div>
+<p><code>tissueBoundary(sfe)</code> is equivalent to
+<code>annotGeometry(sfe, "tissueBoundary")</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">tb</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Setter, by name or index</span></span>
-<span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">annotGeometry</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"tissueBoundary"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">tb</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get names of annotation geometries</span></span>
-<span><span class="op">(</span><span class="va">ag_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">annotGeometryNames</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "tissueBoundary"      "myofiber_full"       "myofiber_simplified"</span></span>
-<span><span class="co">#&gt; [4] "nuclei"              "nuclei_centroid"</span></span></code></pre></div>
-<p>There are shorthands for specific annotation geometries. For example,
-<code>tissueBoundary(sfe)</code> is equivalent to
-<code>annotGeometry(sfe, "tissueBoundary")</code>.
-<code><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">cellSeg()</a></code> (cell segmentation) and <code><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">nucSeg()</a></code>
-(nuclei segmentation) would first query <code>colGeometries</code> (for
-single cell, single molecule technologies, equivalent to
-<code>colGeometry(sfe, "cellSeg")</code> or
-<code>colGeometry(sfe, "nucSeg")</code>), and if not found, they will
-query <code>annotGeometries</code> (for array capture and
-microdissection technologies, equivalent to
-<code>annotGeometry(sfe, "cellSeg")</code> or
-<code>annotGeometry(sfe, "nucSeg")</code>).</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Getter</span></span>
 <span><span class="op">(</span><span class="va">tb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">tissueBoundary</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Simple feature collection with 1 feature and 2 fields</span></span>
@@ -420,33 +375,24 @@ microdissection technologies, equivalent to
 <span><span class="co">#&gt; CRS:           NA</span></span>
 <span><span class="co">#&gt;   ID                       geometry sample_id</span></span>
 <span><span class="co">#&gt; 7  7 POLYGON ((5094 13000, 5095 ...     Vis5A</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="va">tb</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Setter</span></span>
 <span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">tissueBoundary</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">tb</span></span></code></pre></div>
-</div>
 </div>
 <div class="section level3">
 <h3 id="spatial-graphs">Spatial graphs<a class="anchor" aria-label="anchor" href="#spatial-graphs"></a>
 </h3>
-<p>Column, row, and annotation spatial graphs can be get or set with
-<code>spatialGraphs</code> and <code>spatialGraph</code> functions.
-Similar to <code>dimGeometr*</code> functions,
-<code>spatialGraph*</code> functions have a <code>MARGIN</code>
-argument. However, since internally, row and column geometries are
-implemented very differently from annotation geometries, while row,
-column, and annotation graphs are implemented the same way, for the
-<code>spatialGraph*</code> functions, <code>MARGIN = 1</code> means
-rows, <code>MARGIN = 2</code> means columns, and <code>MARGIN = 3</code>
-means annotation. Similar to <code>dimGeometry*</code> functions, there
-are <code>rowGraph*</code>, <code>colGraph*</code>, and
-<code>annotGraph*</code> getter and setter functions for each
-margin.</p>
-<p>This package wraps functions in the <code>spdep</code> package to
-find spatial neighborhood graphs. In this example, triangulation is used
-to find the spatial graph; many other methods are also supported, such
-as k nearest neighbors, distance based neighbors, and polygon
-contiguity.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<p>Spatial dependence analyses in the <code>spdep</code> package
+requires a spatial neighborhood graph. The
+<code>SpatialFeatureExperiment</code> package wraps functions in the
+<code>spdep</code> package to find spatial neighborhood graphs. In this
+example, triangulation is used to find the spatial graph; many other
+methods are also supported, such as k nearest neighbors, distance based
+neighbors, and polygon contiguity.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/findSpatialNeighbors-SpatialFeatureExperiment-method.html" class="external-link">findSpatialNeighbors</a></span><span class="op">(</span><span class="va">sfe</span>, MARGIN <span class="op">=</span> <span class="fl">2</span>, type <span class="op">=</span> <span class="st">"spotPoly"</span>, method <span class="op">=</span> <span class="st">"tri2nb"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Characteristics of weights list object:</span></span>
 <span><span class="co">#&gt; Neighbour list object:</span></span>
@@ -459,18 +405,22 @@ contiguity.</p>
 <span><span class="co">#&gt; Weights constants summary:</span></span>
 <span><span class="co">#&gt;    n   nn S0       S1       S2</span></span>
 <span><span class="co">#&gt; W 77 5929 77 28.24222 310.1917</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<p>This is what the triangulated graph looks like</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">g</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SpatialExperiment/man/SpatialExperiment-methods.html" class="external-link">spatialCoords</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
+<p>Similar to <code>colGeometry</code>, <code>rowGeometry</code>, and
+<code>annotGeometry</code>, the spatial graphs can be get and set with
+<code>colGraph</code>, <code>rowGraph</code>, and
+<code>annotGraph</code>; the arguments of the graph getters and setters
+are the same as those of the geometry getters and setters, so we only
+demonstrate <code>colGraph</code> here.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set graph by name</span></span>
-<span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraph</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"graph1"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">g</span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraph</a></span><span class="op">(</span><span class="va">sfe</span>, type <span class="op">=</span> <span class="st">"graph1"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">g</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get graph by name</span></span>
-<span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">spatialGraph</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"graph1"</span>, MARGIN <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span>
-<span><span class="co"># Or equivalently</span></span>
-<span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraph</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"graph1"</span><span class="op">)</span></span>
-<span><span class="va">g</span></span>
+<span><span class="op">(</span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraph</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"graph1"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Characteristics of weights list object:</span></span>
 <span><span class="co">#&gt; Neighbour list object:</span></span>
 <span><span class="co">#&gt; Number of regions: 77 </span></span>
@@ -484,15 +434,15 @@ contiguity.</p>
 <span><span class="co">#&gt; W 77 5929 77 28.24222 310.1917</span></span></code></pre></div>
 <p>For Visium, spatial neighborhood graph of the hexagonal grid can be
 found with the known locations of the barcodes.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraph</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"visium"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/findVisiumGraph.html" class="external-link">findVisiumGraph</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<p>This is what the Visium graph looks like</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraph</a></span><span class="op">(</span><span class="va">sfe</span>, <span class="st">"visium"</span><span class="op">)</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SpatialExperiment/man/SpatialExperiment-methods.html" class="external-link">spatialCoords</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-21-1.png" width="700"></p>
-<p>Similar to <code>dimGeometries</code>, the graphs have
-<code>spatialGraphNames</code> getter and setter and the margin specific
-wrappers.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-19-1.png" width="700"></p>
+<p>Similar to the geometries, the graphs have getters and setters for
+the names:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraphNames</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "graph1" "visium"</span></span></code></pre></div>
 </div>
@@ -510,12 +460,13 @@ within the same section, and second, the coordinates from different
 sections can have overlapping numeric values.</p>
 <p>SFE inherits from SPE, and with geometries and spatial graphs,
 <code>sample_id</code> is even more important. The geometry and graph
-getter and setter functions have a <code>sample_id</code> argument,
-which is optional when only one sample is present in the SFE object.
-This argument is mandatory if multiple samples are present, and can be a
-character vector for multiple samples or “all” for all samples. Below
-are examples of using the getters and setters for multiple samples.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+getter and setter functions shown above have a <code>sample_id</code>
+argument, which is optional when only one sample is present in the SFE
+object. This argument is mandatory if multiple samples are present, and
+can be a character vector for multiple samples or “all” for all samples.
+Below are examples of using the getters and setters for multiple
+samples.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Construct toy dataset with 2 samples</span></span>
 <span><span class="va">sfe1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SFEData/man/McKellarMuscleData.html" class="external-link">McKellarMuscleData</a></span><span class="op">(</span>dataset <span class="op">=</span> <span class="st">"small"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; snapshotDate(): 2022-07-15</span></span>
@@ -552,10 +503,10 @@ are examples of using the getters and setters for multiple samples.</p>
 <span><span class="co">#&gt; sample02:</span></span></code></pre></div>
 <p>Use the <code>sampleIDs</code> function to see the names of all
 samples</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/sampleIDs.html" class="external-link">sampleIDs</a></span><span class="op">(</span><span class="va">sfe_combined</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Vis5A"    "sample02"</span></span></code></pre></div>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Only get the geometries for the second sample</span></span>
 <span><span class="op">(</span><span class="va">spots2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">colGeometry</a></span><span class="op">(</span><span class="va">sfe_combined</span>, <span class="st">"spotPoly"</span>, sample_id <span class="op">=</span> <span class="st">"sample02"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Simple feature collection with 72 features and 1 field</span></span>
@@ -575,133 +526,13 @@ samples</p>
 <span><span class="co">#&gt; ACAGGCTTGCCCGACT  sample02 POLYGON ((7428.88 7358.195,...</span></span>
 <span><span class="co">#&gt; ACCAGTGCGGGAGACG  sample02 POLYGON ((6460.753 8566.757...</span></span>
 <span><span class="co">#&gt; ACCCTCCCTTGCTATT  sample02 POLYGON ((7847.503 8563.771...</span></span></code></pre></div>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Only set the geometries for the second sample</span></span>
-<span><span class="co"># Leaving geometries of the first sample intact</span></span>
-<span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">colGeometry</a></span><span class="op">(</span><span class="va">sfe_combined</span>, <span class="st">"spotPoly"</span>, sample_id <span class="op">=</span> <span class="st">"sample02"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">spots2</span></span></code></pre></div>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Set graph only for the second sample</span></span>
-<span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraph</a></span><span class="op">(</span><span class="va">sfe_combined</span>, <span class="st">"foo"</span>, sample_id <span class="op">=</span> <span class="st">"sample02"</span><span class="op">)</span> <span class="op">&lt;-</span> </span>
-<span>  <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/findSpatialNeighbors-SpatialFeatureExperiment-method.html" class="external-link">findSpatialNeighbors</a></span><span class="op">(</span><span class="va">sfe_combined</span>, sample_id <span class="op">=</span> <span class="st">"sample02"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get graph only for the second sample</span></span>
-<span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraph</a></span><span class="op">(</span><span class="va">sfe_combined</span>, <span class="st">"foo"</span>, sample_id <span class="op">=</span> <span class="st">"sample02"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Characteristics of weights list object:</span></span>
-<span><span class="co">#&gt; Neighbour list object:</span></span>
-<span><span class="co">#&gt; Number of regions: 72 </span></span>
-<span><span class="co">#&gt; Number of nonzero links: 406 </span></span>
-<span><span class="co">#&gt; Percentage nonzero weights: 7.83179 </span></span>
-<span><span class="co">#&gt; Average number of links: 5.638889 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Weights style: W </span></span>
-<span><span class="co">#&gt; Weights constants summary:</span></span>
-<span><span class="co">#&gt;    n   nn S0       S1       S2</span></span>
-<span><span class="co">#&gt; W 72 5184 72 25.82104 289.8299</span></span></code></pre></div>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Set graph of the same name for both samples</span></span>
-<span><span class="co"># The graphs are computed separately for each sample</span></span>
-<span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraphs</a></span><span class="op">(</span><span class="va">sfe_combined</span>, sample_id <span class="op">=</span> <span class="st">"all"</span>, name <span class="op">=</span> <span class="st">"visium"</span><span class="op">)</span> <span class="op">&lt;-</span> </span>
-<span>  <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/findVisiumGraph.html" class="external-link">findVisiumGraph</a></span><span class="op">(</span><span class="va">sfe_combined</span>, sample_id <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get multiple graphs of the same name</span></span>
-<span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraphs</a></span><span class="op">(</span><span class="va">sfe_combined</span>, sample_id <span class="op">=</span> <span class="st">"all"</span>, name <span class="op">=</span> <span class="st">"visium"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $Vis5A</span></span>
-<span><span class="co">#&gt; Characteristics of weights list object:</span></span>
-<span><span class="co">#&gt; Neighbour list object:</span></span>
-<span><span class="co">#&gt; Number of regions: 77 </span></span>
-<span><span class="co">#&gt; Number of nonzero links: 394 </span></span>
-<span><span class="co">#&gt; Percentage nonzero weights: 6.645303 </span></span>
-<span><span class="co">#&gt; Average number of links: 5.116883 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Weights style: W </span></span>
-<span><span class="co">#&gt; Weights constants summary:</span></span>
-<span><span class="co">#&gt;    n   nn S0       S1       S2</span></span>
-<span><span class="co">#&gt; W 77 5929 77 31.68056 311.7544</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $sample02</span></span>
-<span><span class="co">#&gt; Characteristics of weights list object:</span></span>
-<span><span class="co">#&gt; Neighbour list object:</span></span>
-<span><span class="co">#&gt; Number of regions: 72 </span></span>
-<span><span class="co">#&gt; Number of nonzero links: 366 </span></span>
-<span><span class="co">#&gt; Percentage nonzero weights: 7.060185 </span></span>
-<span><span class="co">#&gt; Average number of links: 5.083333 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Weights style: W </span></span>
-<span><span class="co">#&gt; Weights constants summary:</span></span>
-<span><span class="co">#&gt;    n   nn S0       S1       S2</span></span>
-<span><span class="co">#&gt; W 72 5184 72 29.83889 291.5833</span></span></code></pre></div>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Or just all graphs of the margin</span></span>
-<span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/spatialGraphs.html" class="external-link">colGraphs</a></span><span class="op">(</span><span class="va">sfe_combined</span>, sample_id <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $Vis5A</span></span>
-<span><span class="co">#&gt; $Vis5A$visium</span></span>
-<span><span class="co">#&gt; Characteristics of weights list object:</span></span>
-<span><span class="co">#&gt; Neighbour list object:</span></span>
-<span><span class="co">#&gt; Number of regions: 77 </span></span>
-<span><span class="co">#&gt; Number of nonzero links: 394 </span></span>
-<span><span class="co">#&gt; Percentage nonzero weights: 6.645303 </span></span>
-<span><span class="co">#&gt; Average number of links: 5.116883 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Weights style: W </span></span>
-<span><span class="co">#&gt; Weights constants summary:</span></span>
-<span><span class="co">#&gt;    n   nn S0       S1       S2</span></span>
-<span><span class="co">#&gt; W 77 5929 77 31.68056 311.7544</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $sample02</span></span>
-<span><span class="co">#&gt; $sample02$foo</span></span>
-<span><span class="co">#&gt; Characteristics of weights list object:</span></span>
-<span><span class="co">#&gt; Neighbour list object:</span></span>
-<span><span class="co">#&gt; Number of regions: 72 </span></span>
-<span><span class="co">#&gt; Number of nonzero links: 406 </span></span>
-<span><span class="co">#&gt; Percentage nonzero weights: 7.83179 </span></span>
-<span><span class="co">#&gt; Average number of links: 5.638889 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Weights style: W </span></span>
-<span><span class="co">#&gt; Weights constants summary:</span></span>
-<span><span class="co">#&gt;    n   nn S0       S1       S2</span></span>
-<span><span class="co">#&gt; W 72 5184 72 25.82104 289.8299</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $sample02$visium</span></span>
-<span><span class="co">#&gt; Characteristics of weights list object:</span></span>
-<span><span class="co">#&gt; Neighbour list object:</span></span>
-<span><span class="co">#&gt; Number of regions: 72 </span></span>
-<span><span class="co">#&gt; Number of nonzero links: 366 </span></span>
-<span><span class="co">#&gt; Percentage nonzero weights: 7.060185 </span></span>
-<span><span class="co">#&gt; Average number of links: 5.083333 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Weights style: W </span></span>
-<span><span class="co">#&gt; Weights constants summary:</span></span>
-<span><span class="co">#&gt;    n   nn S0       S1       S2</span></span>
-<span><span class="co">#&gt; W 72 5184 72 29.83889 291.5833</span></span></code></pre></div>
 <p>Sample IDs can also be changed, with the <code>changeSampleIDs</code>
 function, with a named vector whose names are the old names and values
 are the new names.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sfe_combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/changeSampleIDs.html" class="external-link">changeSampleIDs</a></span><span class="op">(</span><span class="va">sfe</span>, replacement <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Vis5A <span class="op">=</span> <span class="st">"foo"</span>, sample02 <span class="op">=</span> <span class="st">"bar"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">sfe_combined</span></span>
-<span><span class="co">#&gt; class: SpatialFeatureExperiment </span></span>
-<span><span class="co">#&gt; dim: 15123 77 </span></span>
-<span><span class="co">#&gt; metadata(0):</span></span>
-<span><span class="co">#&gt; assays(1): counts</span></span>
-<span><span class="co">#&gt; rownames(15123): ENSMUSG00000025902 ENSMUSG00000096126 ...</span></span>
-<span><span class="co">#&gt;   ENSMUSG00000064368 ENSMUSG00000064370</span></span>
-<span><span class="co">#&gt; rowData names(6): Ensembl symbol ... vars cv2</span></span>
-<span><span class="co">#&gt; colnames(77): AAATTACCTATCGATG AACATATCAACTGGTG ... TTCTTTGGTCGCGACG</span></span>
-<span><span class="co">#&gt;   TTGATGTGTAGTCCCG</span></span>
-<span><span class="co">#&gt; colData names(12): barcode col ... prop_mito in_tissue</span></span>
-<span><span class="co">#&gt; reducedDimNames(0):</span></span>
-<span><span class="co">#&gt; mainExpName: NULL</span></span>
-<span><span class="co">#&gt; altExpNames(0):</span></span>
-<span><span class="co">#&gt; spatialCoords names(2) : imageX imageY</span></span>
-<span><span class="co">#&gt; imgData names(1): sample_id</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Geometries:</span></span>
-<span><span class="co">#&gt; colGeometries: spotPoly (POLYGON), foobar (POLYGON) </span></span>
-<span><span class="co">#&gt; annotGeometries: tissueBoundary (POLYGON), myofiber_full (GEOMETRY), myofiber_simplified (GEOMETRY), nuclei (POLYGON), nuclei_centroid (POINT) </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Graphs:</span></span>
-<span><span class="co">#&gt; foo: col: graph1, visium</span></span></code></pre></div>
+<span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/sampleIDs.html" class="external-link">sampleIDs</a></span><span class="op">(</span><span class="va">sfe_combined</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "foo"</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -710,11 +541,12 @@ are the new names.</p>
 <div class="section level3">
 <h3 id="from-scratch">From scratch<a class="anchor" aria-label="anchor" href="#from-scratch"></a>
 </h3>
-<p>An SFE object can be constructed from scratch with the assay matrices
-and metadata. In this toy example, <code>dgCMatrix</code> is used, but
-since SFE inherits from SingleCellExperiment (SCE), other types of
-arrays supported by SCE such as delayed arrays should also work.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<p>An SFE object can be constructed from scratch with the assay
+matrices, column metadata, and spatial coordinates. In this toy example,
+<code>dgCMatrix</code> is used, but since SFE inherits from
+SingleCellExperiment (SCE), other types of arrays supported by SCE such
+as delayed arrays should also work.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Visium barcode location from Space Ranger</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"visium_row_col"</span><span class="op">)</span></span>
 <span><span class="va">coords1</span> <span class="op">&lt;-</span> <span class="va">visium_row_col</span><span class="op">[</span><span class="va">visium_row_col</span><span class="op">$</span><span class="va">col</span> <span class="op">&lt;</span> <span class="fl">6</span> <span class="op">&amp;</span> <span class="va">visium_row_col</span><span class="op">$</span><span class="va">row</span> <span class="op">&lt;</span> <span class="fl">6</span>,<span class="op">]</span></span>
@@ -736,14 +568,14 @@ converted into spot polygons with the <code>spotDiameter</code>
 argument. Spot diameter in pixels in full resolution image can be found
 in the <code>scalefactors_json.json</code> file in Space Ranger
 output.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sfe3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/SpatialFeatureExperiment.html" class="external-link">SpatialFeatureExperiment</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">mat</span><span class="op">)</span>, colData <span class="op">=</span> <span class="va">coords1</span>,</span>
 <span>                                spatialCoordsNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"col"</span>, <span class="st">"row"</span><span class="op">)</span>,</span>
 <span>                                spotDiameter <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span></code></pre></div>
 <p>More geometries and spatial graphs can be added after calling the
 constructor.</p>
 <p>Geometries can also be supplied in the constructor.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert regular data frame with coordinates to sf data frame</span></span>
 <span><span class="va">cg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/df2sf.html" class="external-link">df2sf</a></span><span class="op">(</span><span class="va">coords1</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"col"</span>, <span class="st">"row"</span><span class="op">)</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"col"</span>, <span class="st">"row"</span><span class="op">)</span>, spotDiameter <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">cg</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span></span>
@@ -759,7 +591,7 @@ filtered matrix is read in, then a column graph called
 <code>visium</code> will also be present, for the spatial neighborhood
 graph of the Visium spots on tissue. The graph is not computed if all
 spots are read in regardless of whether they are on tissue.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example from SpatialExperiment</span></span>
 <span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"10xVisium"</span><span class="op">)</span>, </span>
@@ -767,15 +599,20 @@ spots are read in regardless of whether they are on tissue.</p>
 <span>  </span>
 <span><span class="va">sample_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"section1"</span>, <span class="st">"section2"</span><span class="op">)</span></span>
 <span><span class="va">samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="va">sample_ids</span>, <span class="st">"outs"</span><span class="op">)</span></span>
-<span>  </span>
+<span></span>
+<span><span class="co"># The "outs" directory in Space Ranger output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">samples</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "raw_feature_bc_matrix" "spatial"</span></span>
+<span></span>
+<span><span class="co"># The contents of the "spatial" directory</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">samples</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">"spatial"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "scalefactors_json.json"    "tissue_lowres_image.png"  </span></span>
 <span><span class="co">#&gt; [3] "tissue_positions_list.csv"</span></span>
+<span></span>
+<span><span class="co"># Where the raw gene count matrix is located</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">samples</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">"raw_feature_bc_matrix"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "/usr/local/lib/R/site-library/SpatialExperiment/extdata/10xVisium/section1/outs/raw_feature_bc_matrix"</span></span></code></pre></div>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">sfe3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/read10xVisiumSFE.html" class="external-link">read10xVisiumSFE</a></span><span class="op">(</span><span class="va">samples</span>, <span class="va">sample_ids</span>, type <span class="op">=</span> <span class="st">"sparse"</span>, data <span class="op">=</span> <span class="st">"raw"</span>,</span>
 <span>                         load <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; class: SpatialFeatureExperiment </span></span>
@@ -808,14 +645,14 @@ spots are read in regardless of whether they are on tissue.</p>
 <p>SPE objects can be coerced into SFE objects. If column geometries or
 spot diameter are not specified, then a column geometry called
 “centroids” will be created.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">spe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SpatialExperiment/man/read10xVisium.html" class="external-link">read10xVisium</a></span><span class="op">(</span><span class="va">samples</span>, <span class="va">sample_ids</span>, type <span class="op">=</span> <span class="st">"sparse"</span>, data <span class="op">=</span> <span class="st">"raw"</span>, </span>
 <span>  images <span class="op">=</span> <span class="st">"lowres"</span>, load <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>For the coercion, column names must not be duplicate.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">spe</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/make.unique.html" class="external-link">make.unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">spe</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SpatialExperiment/man/SpatialExperiment-methods.html" class="external-link">spatialCoords</a></span><span class="op">(</span><span class="va">spe</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">spe</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">sfe3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/SpatialFeatureExperiment-coercion.html" class="external-link">toSpatialFeatureExperiment</a></span><span class="op">(</span><span class="va">spe</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; class: SpatialFeatureExperiment </span></span>
 <span><span class="co">#&gt; dim: 50 99 </span></span>
@@ -850,7 +687,7 @@ spot diameter are not specified, then a column geometry called
 </h3>
 <p>SFE objects can be concatenated with <code>cbind</code>, as was done
 just now to create a toy example with 2 samples.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sfe_combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">sfe1</span>, <span class="va">sfe2</span><span class="op">)</span></span></code></pre></div>
 <p>The SFE object can also be subsetted like a matrix, like an SCE
 object. More complexity arises when it comes to the spatial graphs. The
@@ -863,9 +700,9 @@ will be reconstructed with the remaining nodes after subsetting.
 Reconstruction would only work when the original graphs were constructed
 with <code>findSpatialNeighbors</code> or <code>findVisiumGraph</code>
 in this package, which records the method and parameters used to
-construct the graphs. If reconstruction fails, then a waning will be
+construct the graphs. If reconstruction fails, then a warning will be
 issued and the graphs removed.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">sfe_subset</span> <span class="op">&lt;-</span> <span class="va">sfe</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, drop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Node indices in the graphs are no longer valid after subsetting. Dropping all row and col graphs.</span></span>
 <span><span class="co">#&gt; class: SpatialFeatureExperiment </span></span>
@@ -890,7 +727,7 @@ issued and the graphs removed.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Graphs:</span></span>
 <span><span class="co">#&gt; Vis5A:</span></span></code></pre></div>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Will give warning because graph reconstruction fails</span></span>
 <span><span class="va">sfe_subset</span> <span class="op">&lt;-</span> <span class="va">sfe</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></code></pre></div>
 </div>
@@ -910,23 +747,23 @@ in QuPath or LabKit (the latter needs to be converted into polygon).</p>
 <p>Use the <code>crop</code> function to directly get the subsetted SFE
 object. Note that in this version of this package, <code>crop</code>
 does NOT crop the image.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Before</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">tissueBoundary</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">spotPoly</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"gray"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-44-1.png" width="700"></p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-36-1.png" width="700"></p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sfe_in_tissue</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/crop.html" class="external-link">crop</a></span><span class="op">(</span><span class="va">sfe</span>, y <span class="op">=</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">tissueBoundary</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span>, colGeometryName <span class="op">=</span> <span class="st">"spotPoly"</span><span class="op">)</span></span></code></pre></div>
 <p>Note that for large datasets with many geometries, cropping can take
 a while to run.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># After</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_geometry</a></span><span class="op">(</span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotGeometries.html" class="external-link">tissueBoundary</a></span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/dimGeometries.html" class="external-link">spotPoly</a></span><span class="op">(</span><span class="va">sfe_in_tissue</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"gray"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-46-1.png" width="700"></p>
+<p><img src="vig2_SFE_files/figure-html/unnamed-chunk-38-1.png" width="700"></p>
 <p><code>crop</code> can also be used in the conventional sense of
 cropping, i.e. specifying a bounding box.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sfe_cropped</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/crop.html" class="external-link">crop</a></span><span class="op">(</span><span class="va">sfe</span>, colGeometryName <span class="op">=</span> <span class="st">"spotPoly"</span>, sample_id <span class="op">=</span> <span class="st">"Vis5A"</span>,</span>
 <span>                    xmin <span class="op">=</span> <span class="fl">5500</span>, xmax <span class="op">=</span> <span class="fl">6500</span>, ymin <span class="op">=</span> <span class="fl">13500</span>, ymax <span class="op">=</span> <span class="fl">14500</span><span class="op">)</span></span></code></pre></div>
 <p>The <code>colGeometryName</code> is used to determine which columns
@@ -949,8 +786,8 @@ spot. Or get the intersections between each Visium spot and nuclei.
 Again, the geometry predicates and operations are performed
 independently for each sample, and the <code>sample_id</code> argument
 is optional when there is only one sample.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Get logical vector</span></span>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get logical vector of whether each Visium spot intersects tissue</span></span>
 <span><span class="fu">colData</span><span class="op">(</span><span class="va">sfe</span><span class="op">)</span><span class="op">$</span><span class="va">in_tissue</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/annotPred.html" class="external-link">annotPred</a></span><span class="op">(</span><span class="va">sfe</span>, colGeometryName <span class="op">=</span> <span class="st">"spotPoly"</span>, </span>
 <span>                                    annotGeometryName <span class="op">=</span> <span class="st">"tissueBoundary"</span>,</span>
 <span>                                    sample_id <span class="op">=</span> <span class="st">"Vis5A"</span><span class="op">)</span></span>
@@ -966,12 +803,12 @@ origin, which would facilitate plotting and comparison across samples
 with <code>geom_sf</code> and <code>facet_*</code>.</p>
 <p>To find the bounding box of all geometries in each sample of an SFE
 object:</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/bbox-SpatialFeatureExperiment-method.html" class="external-link">bbox</a></span><span class="op">(</span><span class="va">sfe</span>, sample_id <span class="op">=</span> <span class="st">"Vis5A"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  xmin  ymin  xmax  ymax </span></span>
 <span><span class="co">#&gt;  5000 13000  7000 15000</span></span></code></pre></div>
 <p>To move the coordinates:</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sfe_moved</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/removeEmptySpace.html" class="external-link">removeEmptySpace</a></span><span class="op">(</span><span class="va">sfe</span>, sample_id <span class="op">=</span> <span class="st">"Vis5A"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://pachterlab.github.io/SpatialFeatureExperiment/reference/bbox-SpatialFeatureExperiment-method.html" class="external-link">bbox</a></span><span class="op">(</span><span class="va">sfe_moved</span>, sample_id <span class="op">=</span> <span class="st">"Vis5A"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; xmin ymin xmax ymax </span></span>
@@ -984,9 +821,19 @@ in <code>dimGeometry</code> setters.</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="limitations">Limitations<a class="anchor" aria-label="anchor" href="#limitations"></a>
+</h2>
+<ol style="list-style-type: decimal">
+<li>Only 2D data is supported for now.</li>
+<li>Geometric operation do not change the SPE <code>ImgData</code>.</li>
+<li>Does not support raster data or <code>spatstat</code> spatial point
+process analyses.</li>
+</ol>
+</div>
+<div class="section level2">
 <h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.2.0 (2022-04-22)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>

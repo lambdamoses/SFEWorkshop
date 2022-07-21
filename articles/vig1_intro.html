@@ -92,7 +92,7 @@ Pachter</h4>
                   <a class="author_email" href="mailto:#"></a><a href="mailto:lpachter@caltech.edu" class="email">lpachter@caltech.edu</a>
       
                   
-            <h4 data-toc-skip class="date">2022-07-20</h4>
+            <h4 data-toc-skip class="date">2022-07-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/lambdamoses/SFEWorkshop/blob/HEAD/vignettes/vig1_intro.Rmd"><code>vignettes/vig1_intro.Rmd</code></a></small>
       <div class="hidden name"><code>vig1_intro.Rmd</code></div>
@@ -113,20 +113,21 @@ smoothie vs. fruit salad vs. tart.</p>
 <p>Many of you attending this conference in person have traveled to
 Seattle, and might explore Seattle after the talks or the entire
 conference. Bulk RNA-seq is like average values over the entire
-Washington state. It gives some information, such as that Washington
-tends to be cooler and more humid than California, and that median
-household income in California and Washington are higher than that in
-Nevada and Oregon. However, a tourist would like a higher
-resolution.</p>
+Washington state. It gives some information, such as that on average,
+Washington tends to have fewer sunny days per year than California.
+However, each state has diverse climate and weather, and the tourist
+prepares for weather in individual cities rather than the state
+average.</p>
 <p><img src="vig1_intro_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>Non-spatial scRNA-seq is like tourist attractions in Seattle
-separated from their neighborhoods. There’s the Space Needle, the Museum
-of Pop Culture, Chihuli glass museum, Smith Tower, Pike Place, Museum of
+<p>Non-spatial scRNA-seq is like a list of tourist attractions in
+Seattle without spatial locations, where each tourist attraction is
+analogous to a cell. There’s the Space Needle, the Museum of Pop
+Culture, Chihuly Garden and Glass, Smith Tower, Pike Place, Museum of
 Flight, and etc. These tourist attractions can also be classified based
 on their characteristics, such as architectural style, function, and era
-of construction. Dimension reduction can be performed on these numerous
-characteristics. This would be of more interest to an avid tourist who
-really wants to get to know Seattle than the state level averages.</p>
+of construction, analogous to gene expression. Dimension reduction can
+be performed on these numerous characteristics. Compared to the state
+averages, this would be of more interest to a tourist.</p>
 <p><img src="seattle_attractions.png" width="533" style="display: block; margin: auto;"></p>
 <p>How to get to these tourist attractions? When you look at the map,
 you find that certain kinds of tourist attractions tend to cluster in
@@ -143,9 +144,11 @@ transcriptomics is like studying a map of Seattle.</p>
 <div class="section level2">
 <h2 id="introduction-to-spatial-transcriptomics-data">Introduction to spatial transcriptomics data<a class="anchor" aria-label="anchor" href="#introduction-to-spatial-transcriptomics-data"></a>
 </h2>
-Back to spatial transcriptomics. A working definition of “spatial
-transcriptomics” is any attempt to quantify the transcripts of more
-genes than can be done in one round of fluorescent <em>in situ</em>
+Spatial transcriptomics helps us to make maps of the tissue, so just
+like in the geographical map, we may locate characteristics of cells in
+space and find spatial neighborhoods of cells. A working definition of
+“spatial transcriptomics” is any attempt to quantify the transcripts of
+more genes than can be done in one round of fluorescent <em>in situ</em>
 hybridization (FISH) while preserving the spatial context of the gene
 expression in the tissue. Since 2018, interest in spatial
 transcriptomics – in both data collection and data analysis – has grown
@@ -242,13 +245,15 @@ later version of the <code>Voyager</code> package.</li>
 <h2 id="geospatial-data-types-and-how-they-may-relate-to-spatial-transcriptomics">Geospatial data types and how they may relate to spatial
 transcriptomics<a class="anchor" aria-label="anchor" href="#geospatial-data-types-and-how-they-may-relate-to-spatial-transcriptomics"></a>
 </h2>
-<p>Geospatial data broadly fall into two types by representation: vector
-and raster. Vector data represents the world as points, lines, and
-polygons, specified by coordinates. For example, polygons would be
-specified by coordinates of the vertices. Raster data are basically
-images, where each pixel has a value, though unlike the typical RGB
-image, raster data can have many different layers analogous to the 3
-channels in RGB images. Raster is common in remote sensing.
+<p>Opportunities presented by spatial data can be explored by leveraging
+a vast tradition of tools made for geospatial data. Geospatial data
+broadly fall into two types by representation: vector and raster. Vector
+data represents the world as points, lines, and polygons, specified by
+coordinates. For example, polygons would be specified by coordinates of
+the vertices. Raster data are basically images, where each pixel has a
+value, though unlike the typical RGB image, raster data can have many
+different layers analogous to the 3 channels in RGB images. Raster is
+common in remote sensing.
 <img src="spatial_types.png" width="665" style="display: block; margin: auto;"></p>
 <p>Vector data can be further classified by the processes generating the
 data:</p>
@@ -268,9 +273,9 @@ clustered, or repelling each other, and if they are affected by
 covariates.</li>
 <li>When a phenomenon can only occur on a spatial network, such as roads
 and rivers. This can be a point process, such as locations of traffic
-incidents. This can also be analogous to raster data, such as Strava’s
-road/trail popularity heatmap, or areal when Strava’s heatmap is
-summarized over segments.</li>
+incidents. This can also be analogous to raster data, such as <a href="https://www.strava.com/heatmap" class="external-link">Strava’s road/trail popularity
+heatmap</a>, or areal when Strava’s heatmap is summarized over
+segments.</li>
 </ol>
 <p>For each of these data types, there are already well-established
 tools for data analysis. For example, <code>sf</code> represents vector
@@ -325,16 +330,18 @@ and spatial neighborhood graphs. <code>Voyager</code> to SFE is just
 like <code>scater</code>, <code>scran</code>, and <code>scuttle</code>
 to <code>SingleCellExperiment</code>, implementing basic ESDA using
 well-established geospatial tools and plotting functions for geometries
-and ESDA results. We focus on vector data here. Although the fluorsecent
-or H&amp;E images are raster, features extracted from the images, such
-as cell and nuclei segmentation, and transcript spots, are more commonly
-used for downstream analyses.</p>
+and ESDA results. With <code>sf</code>, we focus on vector areal data
+here, because of the popularity of Visium, and that although the
+fluorsecent or H&amp;E images are raster, vector features extracted from
+the images, such as cell and nuclei segmentation, and transcript spots,
+are more commonly used for downstream analyses.</p>
 </div>
 <div class="section level2">
 <h2 id="limitations-and-future-directions">Limitations and future directions<a class="anchor" aria-label="anchor" href="#limitations-and-future-directions"></a>
 </h2>
 <p>No analogy is perfect, and these are some limitations of the
-geospatial analogy:</p>
+geospatial analogy that would call for data analysis methods specific to
+spatial transcriptomics:</p>
 <ol style="list-style-type: decimal">
 <li>Biological tissues are usually originally 3D. Although most spatial
 transcriptomics datasets come from thin sections, some datasets come
@@ -349,6 +356,9 @@ millions of cells or spots. There should be more emphasis on
 multivariate spatial analyses, which we plan to add to a later version
 of <code>Voyager</code>. On disk tools exist for geospatial data, but
 are not supported by SFE yet.</li>
+<li>Unlike cities and natural landscapes, development and structure of
+some tissues (e.g. the cerebral cortex) are tightly regulated and
+similar across individuals.</li>
 </ol>
 </div>
   </div>
