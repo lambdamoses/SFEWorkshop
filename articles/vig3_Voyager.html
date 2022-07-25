@@ -223,7 +223,7 @@ on the structure of the SFE object. The SFE object of this dataset is
 provided in the <code>SFEData</code> package.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">sfe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SFEData/man/McKellarMuscleData.html" class="external-link">McKellarMuscleData</a></span><span class="op">(</span><span class="st">"full"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; snapshotDate(): 2022-07-15</span></span>
+<span><span class="co">#&gt; snapshotDate(): 2022-07-22</span></span>
 <span><span class="co">#&gt; see ?SFEData and browseVignettes('SFEData') for documentation</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="co">#&gt; class: SpatialFeatureExperiment </span></span>
@@ -593,9 +593,7 @@ structure, while negative Moran’s I indicates local structure.</p>
 <p>Upon visual inspection, total UMI counts per spot seem to have
 spatial autocorrelation. A spatial neighborhood graph is required to
 compute Moran’s I, and is specified with the <code>listw</code>
-argument. Also, if the metrics are computed for a large number of
-features, parallel computing is supported, with
-<code>BiocParallel</code>, with the <code>BPPARAM</code> argument.</p>
+argument.</p>
 <p>For matrices, the rows are the features, as in the gene count
 matrix.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
@@ -658,7 +656,10 @@ ellipse fitted to each myofiber.</p>
 <code>colGeometries</code> in this dataset has extra columns.</p>
 <p>For gene expression, the <code>logcounts</code> assay is used by
 default (use the <code>exprs_values</code> argument to change the
-assay), though this may or may not be best practice.</p>
+assay), though this may or may not be best practice. If the metrics are
+computed for a large number of features, parallel computing is
+supported, with <code>BiocParallel</code>, with the <code>BPPARAM</code>
+argument.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sfe_tissue</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/calculateMoransI.html" class="external-link">runMoransI</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, features <span class="op">=</span> <span class="va">hvgs</span>, colGraphName <span class="op">=</span> <span class="st">"visium"</span>, </span>
 <span>                         BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
@@ -744,7 +745,8 @@ the results to the SFE object. MC stands for Monte Carlo. The
 <code>nsim</code> argument specifies the number of simulations.</p>
 <p>Add the results to the SFE object</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sfe_tissue</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/calculateMoranMC.html" class="external-link">colDataMoranMC</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nCounts"</span>, <span class="st">"nGenes"</span><span class="op">)</span>, </span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">29</span><span class="op">)</span></span>
+<span><span class="va">sfe_tissue</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/calculateMoranMC.html" class="external-link">colDataMoranMC</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nCounts"</span>, <span class="st">"nGenes"</span><span class="op">)</span>, </span>
 <span>                             colGraphName <span class="op">=</span> <span class="st">"visium"</span>, nsim <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/colFeatureData.html" class="external-link">colFeatureData</a></span><span class="op">(</span><span class="va">sfe_tissue</span><span class="op">)</span>, <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; DataFrame with 10 rows and 10 columns</span></span>
@@ -834,11 +836,11 @@ permutation test functions, except for the <code>order</code> argument
 specifying the maximum order of neighbors.</p>
 <p>For <code>colData</code>, Moran’s I correlogram:</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sfe_tissue</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/calculateCorrelogram.html" class="external-link">runCorrelogram</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="va">hvgs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, colGraphName <span class="op">=</span> <span class="st">"visium"</span>, </span>
-<span>                             order <span class="op">=</span> <span class="fl">10</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sfe_tissue</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/calculateCorrelogram.html" class="external-link">runCorrelogram</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="va">hvgs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, colGraphName <span class="op">=</span> <span class="st">"visium"</span>, </span>
+<span>                             order <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <p>The results can be plotted with <code>plotCorrelogram</code></p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotCorrelogram.html" class="external-link">plotCorrelogram</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="va">hvgs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Voyager/man/plotCorrelogram.html" class="external-link">plotCorrelogram</a></span><span class="op">(</span><span class="va">sfe_tissue</span>, <span class="va">hvgs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="vig3_Voyager_files/figure-html/unnamed-chunk-34-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>The error bars are twice the standard deviation of the Moran’s I
 value. The standard deviation and p-values (null hypothesis is that
@@ -984,7 +986,7 @@ in later versions.</li>
 <span><span class="co">#&gt;  [73] ggnewscale_0.4.7              mime_0.12                    </span></span>
 <span><span class="co">#&gt;  [75] evaluate_0.15                 xtable_1.8-4                 </span></span>
 <span><span class="co">#&gt;  [77] gridExtra_2.3                 compiler_4.2.0               </span></span>
-<span><span class="co">#&gt;  [79] tibble_3.1.7                  KernSmooth_2.23-20           </span></span>
+<span><span class="co">#&gt;  [79] tibble_3.1.8                  KernSmooth_2.23-20           </span></span>
 <span><span class="co">#&gt;  [81] crayon_1.5.1                  R.oo_1.25.0                  </span></span>
 <span><span class="co">#&gt;  [83] htmltools_0.5.3               mgcv_1.8-40                  </span></span>
 <span><span class="co">#&gt;  [85] later_1.3.0                   spdep_1.2-4                  </span></span>
