@@ -240,7 +240,7 @@ Where $n$ is the number of spots or locations, $i$ and $j$ are different locatio
 
 Moran's I takes values between -1 and 1. For positive spatial autocorrelation, i.e. nearby spots tend to be more similar, Moran's I will be positive. For negative spatial autocorrelation, i.e. nearby spots tend to be more dissimilar, Moran's I will be negative. When the variable is distributed in space randomly like salt and pepper, then Moran's I will be around 0. Positive Moran's I indicates global structure, while negative Moran's I indicates local structure.
 
-Upon visual inspection, total UMI counts per spot seem to have spatial autocorrelation. A spatial neighborhood graph is required to compute Moran's I, and is specified with the `listw` argument. Also, if the metrics are computed for a large number of features, parallel computing is supported, with `BiocParallel`, with the `BPPARAM` argument.
+Upon visual inspection, total UMI counts per spot seem to have spatial autocorrelation. A spatial neighborhood graph is required to compute Moran's I, and is specified with the `listw` argument. 
 
 For matrices, the rows are the features, as in the gene count matrix.
 ```{r}
@@ -273,7 +273,7 @@ head(attr(annotGeometry(sfe_tissue, "myofiber_simplified"), "featureData"))
 
 For a non-geometry column in a `colGeometry`, `colGeometryMoransI` is like `annotGeometryMoransI` here, but none of the `colGeometries` in this dataset has extra columns.
 
-For gene expression, the `logcounts` assay is used by default (use the `exprs_values` argument to change the assay), though this may or may not be best practice.
+For gene expression, the `logcounts` assay is used by default (use the `exprs_values` argument to change the assay), though this may or may not be best practice. If the metrics are computed for a large number of features, parallel computing is supported, with `BiocParallel`, with the `BPPARAM` argument.
 ```{r}
 sfe_tissue <- runMoransI(sfe_tissue, features = hvgs, colGraphName = "visium", 
                          BPPARAM = MulticoreParam(2))
@@ -305,6 +305,7 @@ Is the spatial autocorrelation statistically significant? The `moran.test` funct
 
 Add the results to the SFE object
 ```{r}
+set.seed(29)
 sfe_tissue <- colDataMoranMC(sfe_tissue, features = c("nCounts", "nGenes"), 
                              colGraphName = "visium", nsim = 100)
 head(colFeatureData(sfe_tissue), 10)
@@ -334,13 +335,13 @@ What's the length scale of the spatial autocorrelation? In a correlogram, spatia
 
 For `colData`, Moran's I correlogram:
 ```{r}
-sfe_tissue <- runCorrelogram(sfe_tissue, hvgs[1:5], colGraphName = "visium", 
-                             order = 10, BPPARAM = MulticoreParam(2))
+sfe_tissue <- runCorrelogram(sfe_tissue, hvgs[1:2], colGraphName = "visium", 
+                             order = 10)
 ```
 
 The results can be plotted with `plotCorrelogram`
 ```{r}
-plotCorrelogram(sfe_tissue, hvgs[1:5])
+plotCorrelogram(sfe_tissue, hvgs[1:2])
 ```
 
 The error bars are twice the standard deviation of the Moran's I value. The standard deviation and p-values (null hypothesis is that Moran's I is 0) come from `moran.test` (for Geary's C correlogram, `geary.test`); these should be taken with a grain of salt for data that is not normally distributed. The p-values have been corrected for multiple hypothesis testing across all orders and features. As usual, . means p < 0.1, \* means p < 0.05, \*\* means p < 0.01, and \*\*\* means p < 0.001. 
