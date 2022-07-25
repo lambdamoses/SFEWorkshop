@@ -1,6 +1,6 @@
 # BioC 2022 SpatialFeatureExperiment workshop
 
-Here we demonstrate the [`SpatialFeatureExperiment`](https://github.com/pachterlab/SpatialFeatureExperiment) (SFE) S4 class that brings [Simple Features (as in the `sf` package)](https://r-spatial.github.io/sf/) to [`SpatialExperiment`](https://github.com/drighelli/SpatialExperiment), and exploratory spatial data analysis (ESDA) with the SFE object with the [`Voyager`](https://github.com/pachterlab/Voyager) package. This workshop has 3 parts:
+Here we demonstrate the [`SpatialFeatureExperiment`](https://github.com/pachterlab/SpatialFeatureExperiment) (SFE), an S4 class that brings [Simple Features (as in the `sf` package)](https://r-spatial.github.io/sf/) to [`SpatialExperiment`](https://github.com/drighelli/SpatialExperiment), and exploratory spatial data analysis (ESDA) with the SFE object with the [`Voyager`](https://github.com/pachterlab/Voyager) package. This workshop has 3 parts:
 
 1. An introduction to spatial transcriptomics, geospatial data, and how the geospatial methods may or may not apply to spatial transcriptomics.
 2. Introduction to the `sf` data frame and the SFE object, which bring geospatial tools to spatial transcriptomics. A [published Visium dataset](https://doi.org/10.1038/s42003-021-02810-x) already as an SFE object provided in the [`SFEData`](https://github.com/pachterlab/SFEData) package is used for the demonstrations here and in part 3.
@@ -13,7 +13,7 @@ Here we demonstrate the [`SpatialFeatureExperiment`](https://github.com/pachterl
 * Familiarity with `sf` is preferable
 
 ## Installation
-We plan to submit the packages presented in this workshop to Bioconductor. Before they get accepted in Bioconductor, they can be installed from GitHub:
+We have submitted the packages presented in this workshop to Bioconductor. Before they get accepted, they can be installed from GitHub:
 
 ```
 devtools::install_github("pachterlab/SFEData")

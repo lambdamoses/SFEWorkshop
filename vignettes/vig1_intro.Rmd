@@ -51,7 +51,7 @@ for (i in seq_along(bboxes)) {
 }
 ```
 
-```{r, fig.width=8, fig.height=3}
+```{r, fig.width=8, fig.height=3, fig.alt="Maps of California, Nevada, Oregon, and Washington shown in separate facets and dissociated from space, each colored by the average number of sunny days per year in the state. California and Nevada have more sunny days than Oregon and Washington."}
 ggplot(states_sub, aes(fill = sunny_days)) + geom_sf() +
   theme_void(18) +
   facet_wrap(~ state_name, nrow = 1) +
@@ -60,25 +60,25 @@ ggplot(states_sub, aes(fill = sunny_days)) + geom_sf() +
 
 Non-spatial scRNA-seq is like a list of tourist attractions in Seattle without spatial locations, where each tourist attraction is analogous to a cell. There's the Space Needle, the Museum of Pop Culture, Chihuly Garden and Glass, Smith Tower, Pike Place, Museum of Flight, and etc. These tourist attractions can also be classified based on their characteristics, such as architectural style, function, and era of construction, analogous to gene expression. Dimension reduction can be performed on these numerous characteristics. Compared to the state averages, this would be of more interest to a tourist. 
 
-```{r, fig.align='center'}
+```{r, fig.align='center', fig.alt="Photos of tourist attractions in Seattle dissociated from the geographical locations of these tourist attractions. The tourist attractions include: Living Computers, Museum of Pop Culture, Space Needle, Seattle Museum of Art, Pike Place, Chihuly Glass and Garden, Museum of Flight, Smith Tower, University of Washington, Mount Rainier, and Gas Works Park."}
 knitr::include_graphics("seattle_attractions.png")
 ```
 
 How to get to these tourist attractions? When you look at the map, you find that certain kinds of tourist attractions tend to cluster in space, such as the cluster of museums in the vicinity of Space Needle and the cluster of older buildings around Smith Tower. Different regions of Seattle with different vibes and functions are also annotated on the map. There are historical reasons that led to such spatial regions and clustering, such as the 1962 World's Fair that gave rise to the Space Needle. Here we see how locating the tourist attractions in space point to a deeper understanding of the properties of Seattle. Spatial transcriptomics is like studying a map of Seattle. 
 
-```{r, fig.align='center', fig.width=5, fig.height=5}
+```{r, fig.align='center', fig.width=5, fig.height=5, fig.alt="A map of central Seattle with places of interest and neighborhoods labeled."}
 knitr::include_graphics("seattle_map.png")
 ```
 
 # Introduction to spatial transcriptomics data
 Spatial transcriptomics helps us to make maps of the tissue, so just like in the geographical map, we may locate characteristics of cells in space and find spatial neighborhoods of cells. A working definition of "spatial transcriptomics" is any attempt to quantify the transcripts of more genes than can be done in one round of fluorescent *in situ* hybridization (FISH) while preserving the spatial context of the gene expression in the tissue. Since 2018, interest in spatial transcriptomics -- in both data collection and data analysis -- has grown drastically. 
-```{r, fig.cap="Number of publication over time for current era data collection and data analysis. Bin width is 120 days. The x-shaped points show the number of publications from the last bin, which is not yet full."}
+```{r, fig.cap="Number of publication over time for current era data collection and data analysis. Bin width is 120 days. The x-shaped points show the number of publications from the last bin, which is not yet full.", fig.alt="Number of publications on spatial transcriptomics over time are shown as curves. The x axis is date published, and the y axis is number of publication in each 120 day time bin. The blue curve is for data collection papers, and the y axis is for data analysis papers. Both curves rise sharply since 2018."}
 knitr::include_graphics("analysis-current-1.png", dpi = 200)
 ```
 
 Based on how the spatial context is preserved, spatial transcriptomics data collection technologies fall into 5 categories, sorted by popularity (plot showing number of publications per category), though there are gray areas:
 
-```{r, fig.cap="Techniques used by at least 3 institutions and the number of institutions that have used them."}
+```{r, fig.cap="Techniques used by at least 3 institutions and the number of institutions that have used them.", fig.alt="Bar chart showing the number of institutions using each spatial transcriptomics data collection method. Only methods used by at least 3 different institutions are shown. The bars are colored by category of the methods. 10X Visium (category NGS barcoding) is used by over 100 institutions, far more than any other method. Following Visium is GeoMX DSP (category ROI selection), used by over 20 institutions. 2016 ST and some other ROI selection methods follow, then ISS, then Stereo-seq and slide-seq2 (both NGS barcoding), then a number of smFISH based methods such as Molecular Cartography and MERFISH."}
 knitr::include_graphics("n-insts-1.png", dpi = 200)
 ```
 
@@ -88,7 +88,7 @@ knitr::include_graphics("n-insts-1.png", dpi = 200)
 4. *In situ* sequencing (ISS), which is similar to smFISH as the transcripts are visualized as discrete puncta and counted. However, in ISS, the gene barcodes are determined by *in situ* sequencing, usually with sequencing by ligation, rather than with combinatorial barcoding. smFISH and ISS based data have single cell resolution.
 5. Spatial context is not directly recorded, but computationally reconstructed, such as by recording pairwise spatial adjacency of cDNAs as in DNA microscopy. In addition, the term "spatial" is sometimes used to refer to sub-cellular resolution, such as in APEX-seq, where transcripts are "localized" or organelles; since no spatial coordinates are recorded, packages in this workshop are irrelevant to these technologies.
 
-```{r, dpi = 300}
+```{r, dpi = 300, fig.alt="Schematics of key aspects of some spatial transcriptomics data collection technologies of interest. Panel A: Infrared (IR) laser capture microdissection, where IR laser melts a membrane to fuse it to the tissue in order to microdissect that region of the tissue. Panel B: GeoMX DSP targets each gene with probes with ultraviolet (UV) cleavable tags to identify the genes; the UV laser is directed at certain ROIs to only quantify gene expression from these ROIs. Panel C: In seqFISH, a smFISH based method, genes from which each transcript spot comes from are identified by a sequence of colors from different rounds of hybridization. Panel D: In MERFISH, another smFISH based method, a binary code of presence and absence of signal from each transcript spot over multiple rounds of hybridization is used to identify the gene each transcript spot comes from. Panel E: A method of sequencing by ligation called cPAL is commonly used in ISS. The gene barcodes are rolling circle amplified. Each round of hybridization queries one base in the barcode, and the base is read off as a color. Only probes matching at the queried base can be ligated to another probe with known sequence, and those not ligated are washed away before reading off the bases. Panel F: Schematics of different NGS barcoding technologies. Of interest here, Visium prints spatial barcodes with transcript capture sequences on a glass slide in a hexagonal array. Each spot is 55 microns in diameter and 100 microns apart center to center. The tissue is mounted on the slide and permeablized so the spots capture the transcripts from the tissue. Panel G: Schematics of upstream and downstream data analyses in spatial transcriptomics; this panel is described in the following paragraph in the main text."}
 knitr::include_graphics("https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41592-022-01409-2/MediaObjects/41592_2022_1409_Fig2_HTML.png")
 ```
 
@@ -102,7 +102,7 @@ In the literature when spatial transcriptomics data is generated, the data is of
 
 # Geospatial data types and how they may relate to spatial transcriptomics
 Opportunities presented by spatial data can be explored by leveraging a vast tradition of tools made for geospatial data. Geospatial data broadly fall into two types by representation: vector and raster. Vector data represents the world as points, lines, and polygons, specified by coordinates. For example, polygons would be specified by coordinates of the vertices. Raster data are basically images, where each pixel has a value, though unlike the typical RGB image, raster data can have many different layers analogous to the 3 channels in RGB images. Raster is common in remote sensing.
-```{r}
+```{r, fig.alt="Example image of different types of geospatial data: Areal, showing covid cases per capita as of July 12, 2022 in Seattle. Geostatistical, showing zinc concentration measured at many points around the Meuse river. Network, showing Strava heatmap of road popularity among cyclists in Seattle. Point process, showing locations of copper mines and geological faults. Raster, showing an elevation map in Zion National Park. These data types are explained in the main text."}
 knitr::include_graphics("spatial_types.png")
 ```
 

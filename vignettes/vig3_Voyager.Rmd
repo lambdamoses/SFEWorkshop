@@ -165,32 +165,25 @@ plot_counts_logcounts <- function(sfe, feature) {
 }
 ```
 
-```{r}
+```{r, fig.alt="Raw and log normalized counts of Myh7, marker gene of type I myofiber, plotted side by side on Visium spots in space, with myofiber polygons colored by myofiber cross section area plotted in the background. Visium spots expressing Myh7 concentrate in the lower left part of the tissue where the myofibers tend to be smaller."}
 plot_counts_logcounts(sfe_tissue, markers["I"])
 ```
 
 Marker gene for type IIa myofibers is shown here. Those interested may change the code to plot markers for tyle IIb and IIx myofibers.
-```{r}
-
+```{r, fig.alt="Raw and log normalized counts of Myh2, marker gene of type IIa myofiber, plotted side by side on Visium spots in space, with myofiber polygons colored by myofiber cross section area plotted in the background. Visium spots expressing Myh2 concentrate in the lower left and upper left parts of the tissue where the myofibers tend to be smaller. Log normalized counts show a wider region with higher expression."}
 plot_counts_logcounts(sfe_tissue, markers["IIa"])
 ```
 
 Type IIa myofibers also tend to be clustered together on left side of the tissue.
 
-```{r}
+As SFE inherits from SCE, the non-spatial EDA plots from the `scater` package can still be used.
+```{r, fig.alt="Scatter plot of mean area of myofibers intersecting each Visium spot in the x axis and proportion of mitochondrially encoded counts per spot in the y axis, with points colored by expression of Myh2."}
 gene_id <- rownames(sfe_tissue)[rowData(sfe_tissue)$symbol == markers["IIa"]]
-plotColData(sfe_tissue, x = "nCounts", y = "prop_mito", 
-            colour_by = gene_id, by_exprs_values = "logcounts")
-```
-
-Spots with Type IIa myofibers tend to have higher proportion of mitochondrial counts, mostly in the upper cluster in this plot. However, some of these spots are in the lower cluster. As Visium spots can intersect with multiple myofibers, these spots might have both Type IIa and some more anaerobic myofibers.
-
-```{r}
 plotColData(sfe_tissue, x = "mean_myofiber_area", y = "prop_mito", 
             colour_by = gene_id, by_exprs_values = "logcounts")
 ```
 
-Plotting proportion of mitochondrial counts vs. mean myofiber area, we also see two clusters, one with higher proportion of mitochondrial counts and smaller area, and another with lower proportion of mitochondrial counts and on average slightly larger area. Type IIa myofibers tend to have smaller area and larger proportion of mitochondrial counts.
+Plotting proportion of mitochondrial counts vs. mean myofiber area, we see two clusters, one with higher proportion of mitochondrial counts and smaller area, and another with lower proportion of mitochondrial counts and on average slightly larger area. Type IIa myofibers tend to have smaller area and larger proportion of mitochondrial counts.
 
 # Spatial neighborhood graphs
 A spatial neighborhood graph is required to compute spatial dependency metrics such as Moran's I and Geary's C. The `SpatialFeatureExperiment` package wraps methods in `spdep` to find spatial neighborhood graphs, which are stored within the SFE object (see `spdep` documentation for [`gabrielneigh`](https://r-spatial.github.io/spdep/reference/graphneigh.html), [`knearneigh`](https://r-spatial.github.io/spdep/reference/knearneigh.html), [`poly2nb`](https://r-spatial.github.io/spdep/reference/poly2nb.html), and [`tri2nb`](https://r-spatial.github.io/spdep/reference/tri2nb.html)). The `Voyager` package then uses these graphs for spatial dependency analyses, again based on `spdep` in this first version, but methods from other geospatial packages, some of which also use the spatial neighborhood graphs, may be added later as needed.
@@ -205,12 +198,12 @@ annotGraph(sfe_tissue, "myofiber_poly2nb") <-
 ```
 
 The `plotColGraph` function plots the graph in space associated with a `colGeometry`, along with the geometry of interest.
-```{r}
+```{r, fig.alt="Spatial neighborhood graph of Visium spots that intersect tissue."}
 plotColGraph(sfe_tissue, colGraphName = "visium", colGeometryName = "spotPoly")
 ```
 
 Similarly, the `plotAnnotGraph` function plots the graph associated with an `annotGeometry`, along with the geometry of interest. 
-```{r}
+```{r, fig.alt="Spatial neighborhood graph of myofibers, where each edge connects two myofibers that touch."}
 plotAnnotGraph(sfe_tissue, annotGraphName = "myofiber_poly2nb", 
                annotGeometryName = "myofiber_simplified")
 ```
@@ -314,7 +307,7 @@ head(colFeatureData(sfe_tissue), 10)
 Note that while the test is performed for multiple features, the p-values here are not corrected for multiple hypothesis testing.
 
 The results can be plotted:
-```{r}
+```{r, fig.alt="Density plot of Moran's I values from 100 simulations of nCounts and nGenes. The density plots center around 0 and deminish around 0.06 on the right. Vertical lines mark the actual Moran's I. For both nCounts and nGenes, the actual value, at 0.53 and 0.38 respectively, is far higher than the simulated ones, indicating positive spatial autocorrelation."}
 plotMoranMC(sfe_tissue, c("nCounts", "nGenes"))
 ```
 
@@ -326,7 +319,7 @@ sfe_tissue <- colDataGearyMC(sfe_tissue, features = c("nCounts", "nGenes"),
                              colGraphName = "visium", nsim = 100)
 ```
 
-```{r}
+```{r, fig.alt="Density plot of Geary's C values from 100 simulations of nCounts and nGenes. The density plots center around 1 and deminish around 0.94 on the left. Vertical lines mark the actual Geary's C. For both nCounts and nGenes, the actual value, at 0.47 and 0.71 respectively, is far lower than the simulated ones, indicating positive spatial autocorrelation."}
 plotMoranMC(sfe_tissue, c("nCounts", "nGenes"), name = "GearyMC")
 ```
 
@@ -340,7 +333,7 @@ sfe_tissue <- runCorrelogram(sfe_tissue, hvgs[1:2], colGraphName = "visium",
 ```
 
 The results can be plotted with `plotCorrelogram`
-```{r}
+```{r, fig.alt="Line plot with order of neighbors (lags) in the x axis and Moran's I value at each lag in the y axis. The x axis ranges from 1 to 10, and the y axis ranges from 0 to 0.8. The lines show trends of decay of spatial autocorrelation with increasing distance of neighbors. Two genes, Car3 and Mb, are shown. Moran's I of both genes decay somewhat linearly from lag 1 to 10. Car3 decays from around 0.75 to around 0.23. Mb decays from around 0.7 to around 0.13. At each lag the error bars are tight (see next paragraph in the main text) and the p-values are less than 0.001 after Benjamini-Hochberg multiple testing correction over the 2 genes and 10 lags."}
 plotCorrelogram(sfe_tissue, hvgs[1:2])
 ```
 
@@ -351,28 +344,28 @@ Again, this can be done for Geary's C, `colData`, `annotGeometry`, and etc. as i
 ### Moran scatter plot
 In the Moran scatter plot, the x axis is the value itself and the y axis is the average value of the neighbors. The slope of the fitted line is Moran's I. Sometimes clusters appear in this plot, showing different kinds of neighborhoods for this value. Just like Moran's I, permutation testing, and correlogram functions, the functions for Moran scatter plot also follow the `calculate*` and `run*` patterns and have the same user interface. However, the plot can only be made for one feature at a time.
 
-For gene expression, to use one gene to demonstrate:
+For gene expression, to use one gene (log normalized value) to demonstrate:
 ```{r}
 sfe_tissue <- runMoranPlot(sfe_tissue, "Myh1", colGraphName = "visium")
 ```
 
-```{r}
+```{r, fig.alt="Moran scatter plot of log normalized values of gene Myh1. This plot is described in the upcoming main text."}
 moranPlot(sfe_tissue, "Myh1", graphName = "visium")
 ```
 
-There are no singletons here. Some Visium spots have neighbors that don't express Myh1 but spots that don't express Myh1 usually have at least some neighbors that do. There are 2 main clusters for spots whose neighbors do express Myh1. 
+The dashed lines mark the mean in Myh1 and spatially lagged Myh1. There are no singletons here. Some Visium spots with lower Myh1 expression have neighbors that don't express Myh1 but spots that don't express Myh1 usually have at least some neighbors that do. There are 2 main clusters for spots whose neighbors do express Myh1: those with high (above average) expression whose neighbors also have high expression, and those with low expression whose neighbors also have low expression. Other features may show different kinds of clusters. We can use k-means clustering to identify clusters, though any clustering method supported by the `bluster` package can be used.
 
 ```{r}
 set.seed(29)
 clusts <- clusterMoranPlot(sfe_tissue, "Myh1", BLUSPARAM = KmeansParam(2))
 ```
 
-```{r}
+```{r, fig.alt="Moran scatter plot of log normalized value of Myh1, colored by 2 k-means clusters, which correspond to the high-high and low-low spots."}
 moranPlot(sfe_tissue, "Myh1", graphName = "visium", color_by = clusts$Myh1)
 ```
 
 Again, plot the clusters in space
-```{r}
+```{r, fig.alt="Visium spots in space colored by the k-means clusters. Cluster 2 (high-high) are mostly in the upper left and lower left parts of the tissue, and the rest of the spots are cluster 1."}
 colData(sfe_tissue)$Myh1_moranPlot_clust <- clusts$Myh1
 plotSpatialFeature(sfe_tissue, "Myh1_moranPlot_clust", colGeometryName = "spotPoly")
 ```

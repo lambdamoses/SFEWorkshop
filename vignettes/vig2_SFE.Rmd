@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 ## Introduction
 Simple Features are a standardized way to represent geometries in space. The [`sf`](https://cran.r-project.org/web/packages/sf/index.html) package provides Simple Features access to R, with the `sf` data frame, which can behave like a regular data frame but has a special list column for the geometries.
 
-```{r, fig.cap="Schematic of the sf data frame, illustration by Allison Horst"}
+```{r, fig.cap="Schematic of the sf data frame, illustration by Allison Horst", fig.alt="A cartoon illustrating the sf data frame; in addition to a regular data frame, geometries are in a special list column. In the cartoon, furry ball characters are taping geometries onto the data frame, in that geometry list column."}
 knitr::include_graphics("https://user-images.githubusercontent.com/520851/50280460-e35c1880-044c-11e9-9ed7-cc46754e49db.jpg")
 ```
 
@@ -59,7 +59,7 @@ Geometries associated with columns of the gene count matrix (cells or Visium spo
 (spots <- colGeometry(sfe, type = "spotPoly"))
 ```
 
-```{r}
+```{r, fig.alt="Hexagonal grid of Visium spots in this example dataset, plotted as polygons. Somes of the spots are cropped off at the border of this dataset."}
 # Use st_geometry so it won't color by the attributes
 plot(st_geometry(spots))
 ```
@@ -92,7 +92,7 @@ spotPoly(sfe) <- spots
 (tb <- tissueBoundary(sfe))
 ```
 
-```{r}
+```{r, fig.alt="Tissue boundary polygon of this example dataset."}
 plot(st_geometry(tb))
 ```
 
@@ -108,7 +108,7 @@ Spatial dependence analyses in the `spdep` package requires a spatial neighborho
 ```
 
 This is what the triangulated graph looks like
-```{r}
+```{r, fig.alt="Spatial neighborhood graph of Visium spots from triangulation; some Visium spots are connected in this graph while they are not in fact adjacent in the hexagonal grid."}
 plot(g, coords = spatialCoords(sfe))
 ```
 
@@ -130,7 +130,7 @@ colGraph(sfe, "visium") <- findVisiumGraph(sfe)
 ```
 
 This is what the Visium graph looks like
-```{r}
+```{r, fig.alt="Spatial neighborhood graph of Visium spots where only spots adjacent on the hexagonal grid are connected."}
 plot(colGraph(sfe, "visium"), coords = spatialCoords(sfe))
 ```
 
@@ -269,7 +269,7 @@ sfe_subset <- sfe[1:10, 1:10]
 Just like `sf` data frames, SFE objects can be subsetted by a geometry and a predicate relating geometries. For example, if all Visium spots were read into an SFE object regardless of whether they are in tissue, and the `tissueBoundary` annotation geometry is provided, then the tissue boundary geometry can be used to subset the SFE object to obtain a new SFE object with only spots on tissue. Loupe does not give the tissue boundary polygon; such polygon can be obtained by thresholding the H&E image and converting the mask into polygons with OpenCV or the `terra` R package, or by manual annotation in QuPath or LabKit (the latter needs to be converted into polygon). 
 
 Use the `crop` function to directly get the subsetted SFE object. Note that in this version of this package, `crop` does NOT crop the image.
-```{r}
+```{r, fig.alt="Plot of Visium spot polygons overlaid on the tissue boundary polygon; spots not on tissue are shown."}
 # Before
 plot(st_geometry(tissueBoundary(sfe)))
 plot(spotPoly(sfe), col = "gray", add = TRUE)
@@ -281,7 +281,7 @@ sfe_in_tissue <- crop(sfe, y = tissueBoundary(sfe), colGeometryName = "spotPoly"
 
 Note that for large datasets with many geometries, cropping can take a while to run.
 
-```{r}
+```{r, fig.alt="Plot of Visium spot polygons overlaid on the tissue boundary polygon; only intersections between the Visium spot polygons and the tissue boundary are kept."}
 # After
 plot(st_geometry(tissueBoundary(sfe)))
 plot(spotPoly(sfe_in_tissue), col = "gray", add = TRUE)
