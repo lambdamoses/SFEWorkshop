@@ -60,7 +60,7 @@ ggplot(states_sub, aes(fill = sunny_days)) + geom_sf() +
 
 Non-spatial scRNA-seq is like a list of tourist attractions in Seattle without spatial locations, where each tourist attraction is analogous to a cell. There's the Space Needle, the Museum of Pop Culture, Chihuly Garden and Glass, Smith Tower, Pike Place, Museum of Flight, and etc. These tourist attractions can also be classified based on their characteristics, such as architectural style, function, and era of construction, analogous to gene expression. Dimension reduction can be performed on these numerous characteristics. Compared to the state averages, this would be of more interest to a tourist. 
 
-```{r, fig.align='center', fig.alt="Photos of tourist attractions in Seattle dissociated from the geographical locations of these tourist attractions. The tourist attractions include: Living Computers, Museum of Pop Culture, Space Needle, Seattle Museum of Art, Pike Place, Chihuly Glass and Garden, Museum of Flight, Smith Tower, University of Washington, Mount Rainier, and Gas Works Park."}
+```{r, fig.align='center', fig.alt="Photos of tourist attractions in Seattle dissociated from the geographical locations of these tourist attractions. The tourist attractions include: Living Computers, Museum of Pop Culture, Space Needle, Seattle Museum of Art, Pike Place, Chihuly Glass and Garden, Museum of Flight, Smith Tower, Rainier Tower, University of Washington, Mount Rainier, and Gas Works Park."}
 knitr::include_graphics("seattle_attractions.png")
 ```
 
