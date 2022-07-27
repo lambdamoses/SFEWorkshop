@@ -92,7 +92,7 @@ Pachter</h4>
                   <a class="author_email" href="mailto:#"></a><a href="mailto:lpachter@caltech.edu" class="email">lpachter@caltech.edu</a>
       
                   
-            <h4 data-toc-skip class="date">2022-07-25</h4>
+            <h4 data-toc-skip class="date">2022-07-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/lambdamoses/SFEWorkshop/blob/HEAD/vignettes/vig1_intro.Rmd"><code>vignettes/vig1_intro.Rmd</code></a></small>
       <div class="hidden name"><code>vig1_intro.Rmd</code></div>
@@ -105,20 +105,19 @@ Pachter</h4>
 <h2 id="an-analogy-from-geographical-space">An analogy from geographical space<a class="anchor" aria-label="anchor" href="#an-analogy-from-geographical-space"></a>
 </h2>
 <p>Data from bulk RNA-seq, single cell RNA-seq (scRNA-seq), and spatial
-transcriptomics all come from originally spatially organized tissues
-(except for blood), where such spatial organization plays a role in the
-properties and functions of the tissues. For this reason, a geographical
-analogy may be more adequate than the traditional analogy of the
-smoothie vs. fruit salad vs. tart.</p>
+transcriptomics all come from spatially organized tissues (except for
+blood), where such spatial organization plays a role in the properties
+and functions of the tissues. For this reason, a geographical analogy
+may be more adequate than the traditional analogy of the smoothie
+vs. fruit salad vs. tart.</p>
 <p>Many of you attending this conference in person have traveled to
-Seattle, and might explore Seattle after the talks or the entire
-conference. Bulk RNA-seq is like average values over the entire
-Washington state. It gives some information, such as that on average,
-Washington tends to have fewer sunny days per year than California.
-However, each state has diverse climate and weather, and the tourist
-prepares for weather in individual cities rather than the state
-average.</p>
-<p><img src="vig1_intro_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
+Seattle, and might explore Seattle after the talks. Bulk RNA-seq is an
+averaging assay, and in analogy, you could consider information averaged
+over Washington State. For example, on average, Washington State tends
+to have fewer sunny days per year than California. However, each state
+has diverse climate and weather, and tourists prepare for weather in
+individual cities rather than the state average.</p>
+<p><img src="vig1_intro_files/figure-html/unnamed-chunk-6-1.png" title="Maps of California, Nevada, Oregon, and Washington shown in separate facets and dissociated from space, each colored by the average number of sunny days per year in the state. California and Nevada have more sunny days than Oregon and Washington." alt="Maps of California, Nevada, Oregon, and Washington shown in separate facets and dissociated from space, each colored by the average number of sunny days per year in the state. California and Nevada have more sunny days than Oregon and Washington." width="576" style="display: block; margin: auto;"></p>
 <p>Non-spatial scRNA-seq is like a list of tourist attractions in
 Seattle without spatial locations, where each tourist attraction is
 analogous to a cell. There’s the Space Needle, the Museum of Pop
@@ -128,18 +127,19 @@ on their characteristics, such as architectural style, function, and era
 of construction, analogous to gene expression. Dimension reduction can
 be performed on these numerous characteristics. Compared to the state
 averages, this would be of more interest to a tourist.</p>
-<p><img src="seattle_attractions.png" width="533" style="display: block; margin: auto;"></p>
-<p>How to get to these tourist attractions? When you look at the map,
-you find that certain kinds of tourist attractions tend to cluster in
-space, such as the cluster of museums in the vicinity of Space Needle
-and the cluster of older buildings around Smith Tower. Different regions
-of Seattle with different vibes and functions are also annotated on the
-map. There are historical reasons that led to such spatial regions and
-clustering, such as the 1962 World’s Fair that gave rise to the Space
-Needle. Here we see how locating the tourist attractions in space point
-to a deeper understanding of the properties of Seattle. Spatial
-transcriptomics is like studying a map of Seattle.</p>
-<p><img src="seattle_map.png" width="533" style="display: block; margin: auto;"></p>
+<p><img src="seattle_attractions.png" title="Photos of tourist attractions in Seattle dissociated from the geographical locations of these tourist attractions. The tourist attractions include: Living Computers, Museum of Pop Culture, Space Needle, Seattle Museum of Art, Pike Place, Chihuly Glass and Garden, Museum of Flight, Smith Tower, Rainier Tower, University of Washington, Mount Rainier, and Gas Works Park." alt="Photos of tourist attractions in Seattle dissociated from the geographical locations of these tourist attractions. The tourist attractions include: Living Computers, Museum of Pop Culture, Space Needle, Seattle Museum of Art, Pike Place, Chihuly Glass and Garden, Museum of Flight, Smith Tower, Rainier Tower, University of Washington, Mount Rainier, and Gas Works Park." width="533" style="display: block; margin: auto;"></p>
+<p>But how does one navigate to various tourist attractions? When you
+look at the map, you find that certain kinds of tourist attractions tend
+to cluster in space, such as the cluster of museums in the vicinity of
+Space Needle and the cluster of older buildings around Smith Tower.
+Different regions of Seattle with different vibes and functions are also
+annotated on the map. There are historical reasons that led to such
+spatial regions and clustering, such as the 1962 World’s Fair that gave
+rise to the Space Needle. Here we see how locating the tourist
+attractions in space point to a deeper understanding of the properties
+of Seattle. Spatial transcriptomics is like studying a map of
+Seattle.</p>
+<p><img src="seattle_map.png" title="A map of central Seattle with places of interest and neighborhoods labeled." alt="A map of central Seattle with places of interest and neighborhoods labeled." width="533" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="introduction-to-spatial-transcriptomics-data">Introduction to spatial transcriptomics data<a class="anchor" aria-label="anchor" href="#introduction-to-spatial-transcriptomics-data"></a>
@@ -154,7 +154,7 @@ expression in the tissue. Since 2018, interest in spatial
 transcriptomics – in both data collection and data analysis – has grown
 drastically.
 <div class="figure" style="text-align: center">
-<img src="analysis-current-1.png" alt="Number of publication over time for current era data collection and data analysis. Bin width is 120 days. The x-shaped points show the number of publications from the last bin, which is not yet full." width="645"><p class="caption">
+<img src="analysis-current-1.png" alt="Number of publications on spatial transcriptomics over time are shown as curves. The x axis is date published, and the y axis is number of publication in each 120 day time bin. The blue curve is for data collection papers, and the y axis is for data analysis papers. Both curves rise sharply since 2018." width="645"><p class="caption">
 Number of publication over time for current era data collection and data
 analysis. Bin width is 120 days. The x-shaped points show the number of
 publications from the last bin, which is not yet full.
@@ -162,10 +162,10 @@ publications from the last bin, which is not yet full.
 </div>
 <p>Based on how the spatial context is preserved, spatial
 transcriptomics data collection technologies fall into 5 categories,
-sorted by popularity (plot showing number of publications per category),
-though there are gray areas:</p>
+sorted by extent of current usage (plot showing number of publications
+per category), though there are gray areas:</p>
 <div class="figure" style="text-align: center">
-<img src="n-insts-1.png" alt="Techniques used by at least 3 institutions and the number of institutions that have used them." width="645"><p class="caption">
+<img src="n-insts-1.png" alt="Bar chart showing the number of institutions using each spatial transcriptomics data collection method. Only methods used by at least 3 different institutions are shown. The bars are colored by category of the methods. 10X Visium (category NGS barcoding) is used by over 100 institutions, far more than any other method. Following Visium is GeoMX DSP (category ROI selection), used by over 20 institutions. 2016 ST and some other ROI selection methods follow, then ISS, then Stereo-seq and slide-seq2 (both NGS barcoding), then a number of smFISH based methods such as Molecular Cartography and MERFISH." width="645"><p class="caption">
 Techniques used by at least 3 institutions and the number of
 institutions that have used them.
 </p>
@@ -203,10 +203,10 @@ reconstructed, such as by recording pairwise spatial adjacency of cDNAs
 as in DNA microscopy. In addition, the term “spatial” is sometimes used
 to refer to sub-cellular resolution, such as in APEX-seq, where
 transcripts are “localized” or organelles; since no spatial coordinates
-are recorded, packages in this workshop are irrelevant to these
+are recorded, packages in this workshop may not be relevant to these
 technologies.</li>
 </ol>
-<p><img src="https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41592-022-01409-2/MediaObjects/41592_2022_1409_Fig2_HTML.png" style="display: block; margin: auto;"></p>
+<p><img src="https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41592-022-01409-2/MediaObjects/41592_2022_1409_Fig2_HTML.png" title="Schematics of key aspects of some spatial transcriptomics data collection technologies of interest. Panel A: Infrared (IR) laser capture microdissection, where IR laser melts a membrane to fuse it to the tissue in order to microdissect that region of the tissue. Panel B: GeoMX DSP targets each gene with probes with ultraviolet (UV) cleavable tags to identify the genes; the UV laser is directed at certain ROIs to only quantify gene expression from these ROIs. Panel C: In seqFISH, a smFISH based method, genes from which each transcript spot comes from are identified by a sequence of colors from different rounds of hybridization. Panel D: In MERFISH, another smFISH based method, a binary code of presence and absence of signal from each transcript spot over multiple rounds of hybridization is used to identify the gene each transcript spot comes from. Panel E: A method of sequencing by ligation called cPAL is commonly used in ISS. The gene barcodes are rolling circle amplified. Each round of hybridization queries one base in the barcode, and the base is read off as a color. Only probes matching at the queried base can be ligated to another probe with known sequence, and those not ligated are washed away before reading off the bases. Panel F: Schematics of different NGS barcoding technologies. Of interest here, Visium prints spatial barcodes with transcript capture sequences on a glass slide in a hexagonal array. Each spot is 55 microns in diameter and 100 microns apart center to center. The tissue is mounted on the slide and permeablized so the spots capture the transcripts from the tissue. Panel G: Schematics of upstream and downstream data analyses in spatial transcriptomics; this panel is described in the following paragraph in the main text." alt="Schematics of key aspects of some spatial transcriptomics data collection technologies of interest. Panel A: Infrared (IR) laser capture microdissection, where IR laser melts a membrane to fuse it to the tissue in order to microdissect that region of the tissue. Panel B: GeoMX DSP targets each gene with probes with ultraviolet (UV) cleavable tags to identify the genes; the UV laser is directed at certain ROIs to only quantify gene expression from these ROIs. Panel C: In seqFISH, a smFISH based method, genes from which each transcript spot comes from are identified by a sequence of colors from different rounds of hybridization. Panel D: In MERFISH, another smFISH based method, a binary code of presence and absence of signal from each transcript spot over multiple rounds of hybridization is used to identify the gene each transcript spot comes from. Panel E: A method of sequencing by ligation called cPAL is commonly used in ISS. The gene barcodes are rolling circle amplified. Each round of hybridization queries one base in the barcode, and the base is read off as a color. Only probes matching at the queried base can be ligated to another probe with known sequence, and those not ligated are washed away before reading off the bases. Panel F: Schematics of different NGS barcoding technologies. Of interest here, Visium prints spatial barcodes with transcript capture sequences on a glass slide in a hexagonal array. Each spot is 55 microns in diameter and 100 microns apart center to center. The tissue is mounted on the slide and permeablized so the spots capture the transcripts from the tissue. Panel G: Schematics of upstream and downstream data analyses in spatial transcriptomics; this panel is described in the following paragraph in the main text." style="display: block; margin: auto;"></p>
 <p>Data analysis methods written for spatial transcriptomics can be
 broadly categorized as upstream and downtream. In upstream analysis, the
 raw data is converted into more usable forms, such as getting the gene
@@ -217,12 +217,12 @@ spatial regions informed by gene expression, and cell-cell interactions.
 <code>SpatialFeatureExperiment</code>, as a way to represent data, is
 more upstream, while <code>Voyager</code>, for exploratory spatial data
 analysis (ESDA), is a little more downstream.</p>
-<p>In the literature when spatial transcriptomics data is generated, the
-data is often treated as non-spatial scRNA-seq data, and some data
-analysis methods for spatial transcriptomics data do not take the
-spatial information into account and are sometimes aimed at non-spatial
-data as well. For example, most cell type deconvolution methods don’t
-take into account spatial autocorrelation in cell type distribution, and
+<p>In the literature when spatial transcriptomics data is generated, it
+is often treated as non-spatial scRNA-seq data, and some data analysis
+methods for spatial transcriptomics data do not take the spatial
+information into account and are sometimes aimed at non-spatial data as
+well. For example, most cell type deconvolution methods don’t take into
+account spatial autocorrelation in cell type distribution, and
 deconvolution methods for bulk RNA-seq is sometimes used for Visium
 data. However, the spatial information presents many opportunities
 unavailable to scRNA-seq, and this workshop will explore some of these
@@ -254,7 +254,7 @@ the vertices. Raster data are basically images, where each pixel has a
 value, though unlike the typical RGB image, raster data can have many
 different layers analogous to the 3 channels in RGB images. Raster is
 common in remote sensing.
-<img src="spatial_types.png" width="665" style="display: block; margin: auto;"></p>
+<img src="spatial_types.png" title="Example image of different types of geospatial data: Areal, showing 7 day rolling mean covid cases per capita as of July 12, 2022 in Seattle. Geostatistical, showing zinc concentration measured at many points around the Meuse river. Network, showing Strava heatmap of road popularity among cyclists in Seattle. Point process, showing locations of copper mines and geological faults. Raster, showing an elevation map in Zion National Park. These data types are explained in the main text." alt="Example image of different types of geospatial data: Areal, showing 7 day rolling mean covid cases per capita as of July 12, 2022 in Seattle. Geostatistical, showing zinc concentration measured at many points around the Meuse river. Network, showing Strava heatmap of road popularity among cyclists in Seattle. Point process, showing locations of copper mines and geological faults. Raster, showing an elevation map in Zion National Park. These data types are explained in the main text." width="665" style="display: block; margin: auto;"></p>
 <p>Vector data can be further classified by the processes generating the
 data:</p>
 <ol style="list-style-type: decimal">
